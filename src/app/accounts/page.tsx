@@ -1,13 +1,13 @@
-import React from "react";
-import { DataTableDemo } from "../components/table";
-import { DialogModal } from "../components/modal/DialogModal";
-import { SheetDemo } from "../components/sheet/Sheet";
-
+import { SheetApp } from "../components/sheet/SheetApp";
+import { DataTableApp } from "../components/table/DataTableApp";
+import { AccountData } from "../mock/account.data";
+import { accountColumns } from "@/domain/users/account.columns";
 export default function Accounts() {
+  // console.log(accountColumns);
   return (
     <div className="flex flex-col">
-      <SheetDemo></SheetDemo>
-      <DataTableDemo></DataTableDemo>;
+      <SheetApp></SheetApp>
+      <DataTableApp columns={accountColumns} data={AccountData}></DataTableApp>
     </div>
   );
 }

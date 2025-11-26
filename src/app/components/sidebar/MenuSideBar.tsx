@@ -1,6 +1,9 @@
 'use client'
 import { Bell, LayoutGrid, LucideIcon, Users } from "lucide-react";
-import Item from "./item";
+import Item from "./ItemSideBar";
+// import Item from "./item";
+
+
 interface ISidebarItem {
   name: string;
   icon: LucideIcon;
