@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +16,11 @@ import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
 import { SwitchApp } from "../switch/SwitchApp";
+import { useState } from "react";
 
 export function SheetApp() {
+  const [selected, setSelected] = useState("DEFAULT");
+  const [checkedChange, setCheckedChange] = useState(false);
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -27,7 +31,7 @@ export function SheetApp() {
           Interact
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[820px]" >
+      <SheetContent className="sm:max-w-[820px]">
         <DialogModal></DialogModal>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
@@ -37,12 +41,25 @@ export function SheetApp() {
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-name">Random delay activation (max second) </Label>
-            <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+            <Label htmlFor="sheet-demo-name">
+              Random delay activation (max second){" "}
+            </Label>
+            <Input
+              id="sheet-demo-name"
+              defaultValue={0}
+              max={600}
+              type="number"
+            />
           </div>
-          <RadioGroupApp></RadioGroupApp>
-          <SwitchApp></SwitchApp>
-          <DialogModal></DialogModal>
+          <RadioGroupApp
+            onChange={setSelected}
+            value={selected}
+          ></RadioGroupApp>
+          <SwitchApp
+            onCheckedChange={setCheckedChange}
+            value={checkedChange}
+          ></SwitchApp>
+          {checkedChange && <DialogModal></DialogModal>}
           <ScrollerApp></ScrollerApp>
         </div>
         <SheetFooter>

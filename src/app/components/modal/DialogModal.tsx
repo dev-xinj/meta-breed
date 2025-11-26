@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 import { MultiSelectApp } from "../select/MultiSelectApp";
 
 export type ModelProp = {
@@ -19,8 +21,16 @@ export type ModelProp = {
   description: string;
 };
 export function DialogModal() {
+  const [selected, setSelected] = useState<string[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const handleSave = (e: React.FormEvent) => {
+    // e.preventDefault();
+    console.log("Selected accounts:", selected);
+    setOpen(false);
+    // TODO: gửi lên API hoặc xử lý logic khác
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
           <Button
@@ -40,13 +50,17 @@ export function DialogModal() {
           </DialogHeader>
 
           <div className="">
-            <MultiSelectApp></MultiSelectApp>
+            <MultiSelectApp
+              value={selected}
+              onChange={setSelected}
+            ></MultiSelectApp>
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button  type="submit">
+            <Button onClick={handleSave} type="submit">
               Save changes
             </Button>
           </DialogFooter>
