@@ -1,38 +1,45 @@
 "use client";
- 
+
 import { Button } from "@/components/ui/button";
 import {
-    FileUpload,
-    FileUploadDropzone,
-    FileUploadItem,
-    FileUploadItemDelete,
-    FileUploadItemMetadata,
-    FileUploadItemPreview,
-    FileUploadList,
-    FileUploadTrigger,
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadList,
+  FileUploadTrigger,
 } from "@/components/ui/file-upload";
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
- 
-export function FileUploadApp() {
-  const [files, setFiles] = React.useState<File[]>([]);
- 
+type FileUploadAppProps = {
+  files: File[];
+  handleSetFile: (val: File[]) => void;
+} & Record<string, any>;
+export function FileUploadApp({
+  files,
+  handleSetFile,
+  ...props
+}: FileUploadAppProps) {
+  // const [files, setFiles] = React.useState<File[]>([]);
+
   const onFileReject = React.useCallback((file: File, message: string) => {
     toast(message, {
-      description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,
+      description: `"${
+        file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name
+      }" has been rejected`,
     });
   }, []);
- 
+
   return (
     <FileUpload
-      maxFiles={2}
-      maxSize={5 * 1024 * 1024}
       className="w-full max-w-md"
       value={files}
-      onValueChange={setFiles}
+      onValueChange={handleSetFile}
       onFileReject={onFileReject}
-      multiple
+      {...props}
     >
       <FileUploadDropzone>
         <div className="flex flex-col items-center gap-1 text-center">

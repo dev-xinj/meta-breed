@@ -12,15 +12,16 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { MultiSelectApp } from "../select/MultiSelectApp";
+import { DialogProps } from "@/domain/props/dialog.types";
 
-export type ModelProp = {
-  labelBtn: string;
-  labelModal: string;
-  labelBtnPrimary: string;
-  labelBtnSecond: string;
-  description: string;
-};
-export function DialogModal() {
+export function DialogModal({
+  dialogProps,
+  children,
+}: {
+  dialogProps: DialogProps;
+  children?: React.ReactNode;
+}) {
+  {console.log(children)};
   const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const handleSave = (e: React.FormEvent) => {
@@ -37,31 +38,32 @@ export function DialogModal() {
             className="w-32 cursor-pointer shadow-lg bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500 ml-4 mt-5"
             variant="outline"
           >
-            Add Accounts
+            {dialogProps.labelBtn}
           </Button>
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[1200px]">
           <DialogHeader>
-            <DialogTitle>Chọn tài khoản để tương tác</DialogTitle>
-            <DialogDescription>
-              Phải chắc chắn rằng đã thêm tài khoản từ hệ thống
-            </DialogDescription>
+            {/* <DialogTitle>Chọn tài khoản để tương tác</DialogTitle> */}
+            <DialogTitle>{dialogProps.labelModal}</DialogTitle>
+            {/* <DialogDescription> Phải chắc chắn rằng đã thêm tài khoản từ hệ thống </DialogDescription> */}
+            <DialogDescription>{dialogProps.description}</DialogDescription>
           </DialogHeader>
 
-          <div className="">
+          {/* <div className="">
             <MultiSelectApp
               value={selected}
               onChange={setSelected}
             ></MultiSelectApp>
-          </div>
-
+          </div> */}
+          
+          {children}
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">{dialogProps.labelBtnSecond}</Button>
             </DialogClose>
             <Button onClick={handleSave} type="submit">
-              Save changes
+              {dialogProps.labelBtnPrimary}
             </Button>
           </DialogFooter>
         </DialogContent>

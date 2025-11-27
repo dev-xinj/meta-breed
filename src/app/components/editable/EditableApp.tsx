@@ -11,14 +11,18 @@ import {
   EditableToolbar,
   EditableTrigger,
 } from "@/components/ui/editable";
- /* Những thuộc tính không cần thiết để props boolean */
-export function EditableApp() {
+/* Những thuộc tính không cần thiết để props boolean */
+export function EditableApp({ row }: { row: string }) {
   return (
-    <Editable defaultValue="Click to edit" placeholder="Enter your text here">
+    <Editable
+      value={row}
+      defaultValue="Click to edit"
+      placeholder="Enter your text here"
+    >
       {/* <EditableLabel>Fruit</EditableLabel> */}
       <EditableArea className="">
         <EditablePreview />
-        <EditableInput />
+        <EditableInput value={row} />
       </EditableArea>
       {/* <EditableTrigger asChild>
         <Button size="sm" className="w-fit">

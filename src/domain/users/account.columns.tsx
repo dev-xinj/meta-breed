@@ -100,16 +100,16 @@ export const accountColumns: ColumnDef<Account>[] = [
                 navigator.clipboard.writeText(account.id)
               }
             >
-              Copy account ID
+              Copy ID
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
             <DropdownMenuItem onClick={() => alert("Clicked!")}>
-              View customer
+              Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Danh sách Posts</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

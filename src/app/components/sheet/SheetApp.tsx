@@ -1,4 +1,5 @@
 "use client";
+import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,10 +18,36 @@ import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
 import { SwitchApp } from "../switch/SwitchApp";
 import { useState } from "react";
-
+import {
+  dialogPropsAccount,
+  dialogPropsComment,
+} from "@/domain/props/dialog.data";
+import { FileUploadApp } from "../input/FileUploadApp";
+import { MultiSelectApp } from "../select/MultiSelectApp";
+type DataExcel = {
+  lastName: string;
+  firstName: string;
+  classes: string;
+};
 export function SheetApp() {
-  const [selected, setSelected] = useState("DEFAULT");
+  const [delayNumber, setDelayNumber] = useState<string>("");
+  const [listAccount, setListAccount] = useState<string[]>([]);
+  const [typeInteract, setTypeInteract] = useState("DEFAULT");
   const [checkedChange, setCheckedChange] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [dataRows, setDataRows] = useState<string[]>([]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDelayNumber(e.target.value);
+  };
+  const handleReadFile = async (files: File[]) => {
+    setFiles(files);
+
+    if (files.length > 0) {
+      const data: DataExcel[] = (await readExcel(files[0])) as DataExcel[];
+      setDataRows(data.map((row) => row.firstName));
+      console.log("Parsed Excel:", dataRows);
+    }
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,7 +59,12 @@ export function SheetApp() {
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-[820px]">
-        <DialogModal></DialogModal>
+        <DialogModal key={2} dialogProps={dialogPropsAccount}>
+          <MultiSelectApp
+            onChange={setListAccount}
+            value={listAccount}
+          ></MultiSelectApp>
+        </DialogModal>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>
@@ -46,24 +78,40 @@ export function SheetApp() {
             </Label>
             <Input
               id="sheet-demo-name"
-              defaultValue={0}
               max={600}
-              type="number"
+              value={delayNumber}
+              onChange={handleChange}
+              type="string"
             />
           </div>
           <RadioGroupApp
-            onChange={setSelected}
-            value={selected}
+            onChange={setTypeInteract}
+            value={typeInteract}
           ></RadioGroupApp>
           <SwitchApp
             onCheckedChange={setCheckedChange}
             value={checkedChange}
           ></SwitchApp>
-          {checkedChange && <DialogModal></DialogModal>}
-          <ScrollerApp></ScrollerApp>
+          {checkedChange && (
+            <DialogModal key={1} dialogProps={dialogPropsComment}>
+              <FileUploadApp
+                files={files}
+                handleSetFile={handleReadFile}
+                accept=".xlsx"
+              ></FileUploadApp>
+            </DialogModal>
+          )}
+          {checkedChange && <ScrollerApp rows={dataRows}></ScrollerApp>}
         </div>
         <SheetFooter>
-          <Button type="submit">Save changes</Button>
+          <Button
+            onClick={() => {
+              console.log(typeInteract, files, listAccount, delayNumber);
+            }}
+            type="submit"
+          >
+            Save changes
+          </Button>
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>
@@ -71,4 +119,15 @@ export function SheetApp() {
       </SheetContent>
     </Sheet>
   );
+}
+async function readExcel(file: File) {
+  const arrayBuffer = await file.arrayBuffer();
+  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+
+  // Lấy sheet đầu tiên
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  // Chuyển sheet thành JSON
+  const json = XLSX.utils.sheet_to_json(sheet);
+  return json;
 }
