@@ -24,18 +24,48 @@ import {
 } from "@/domain/props/dialog.data";
 import { FileUploadApp } from "../input/FileUploadApp";
 import { MultiSelectApp } from "../select/MultiSelectApp";
+import { Emot, Interact } from "@/domain/model/interact.types";
+import { preconnect } from "react-dom";
 type DataExcel = {
   lastName: string;
   firstName: string;
   classes: string;
 };
 export function SheetApp() {
+  const [interact, setInteract] = useState<Interact>(() => {
+    const reactionDetails = new Map<Emot, number>([[Emot.like, 0]]);
+    return {
+      accounts: [],
+      delayActive: 0,
+      behavior: {
+        behaviorType: "DEFAULT",
+        reactionDetails: reactionDetails,
+      },
+      comments: {
+        isComment: false,
+        contentComments: [
+          {
+            id: "85732923565",
+            content: "this is comment",
+          },
+        ],
+      },
+    };
+  });
+
+  const handleDelayActive = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInteract((prev) => {
+      return { ...prev, delayActive: Number(e.target.value) };
+    });
+  };
+
   const [delayNumber, setDelayNumber] = useState<string>("");
   const [listAccount, setListAccount] = useState<string[]>([]);
   const [typeInteract, setTypeInteract] = useState("DEFAULT");
   const [checkedChange, setCheckedChange] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [dataRows, setDataRows] = useState<string[]>([]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDelayNumber(e.target.value);
   };
@@ -79,8 +109,8 @@ export function SheetApp() {
             <Input
               id="sheet-demo-name"
               max={600}
-              value={delayNumber}
-              onChange={handleChange}
+              value={interact.delayActive}
+              onChange={handleDelayActive}
               type="string"
             />
           </div>
@@ -106,7 +136,13 @@ export function SheetApp() {
         <SheetFooter>
           <Button
             onClick={() => {
-              console.log(typeInteract, files, listAccount, delayNumber);
+              console.log(
+                typeInteract,
+                files,
+                listAccount,
+                delayNumber,
+                interact
+              );
             }}
             type="submit"
           >
