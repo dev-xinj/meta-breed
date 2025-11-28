@@ -1,5 +1,5 @@
 "use client";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,24 +13,20 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  ContentComments,
+  Emot,
+  Interact
+} from "@/domain/model/interact.types";
+import {
+  dialogPropsComment
+} from "@/domain/props/dialog.data";
+import { useState } from "react";
+import { FileUploadApp } from "../input/FileUploadApp";
 import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
 import { SwitchApp } from "../switch/SwitchApp";
-import { useEffect, useState } from "react";
-import {
-  dialogPropsAccount,
-  dialogPropsComment,
-} from "@/domain/props/dialog.data";
-import { FileUploadApp } from "../input/FileUploadApp";
-import { MultiSelectApp } from "../select/MultiSelectApp";
-import {
-  Behavior,
-  ContentComments,
-  Emot,
-  Interact,
-} from "@/domain/model/interact.types";
-import { preconnect } from "react-dom";
 export function SheetApp() {
   const [interact, setInteract] = useState<Interact>(() => {
     const reactionDetails = new Map<Emot, number>([[Emot.like, 0]]);
@@ -93,9 +89,13 @@ export function SheetApp() {
 
   const handleReadFile = async (files: File[]) => {
     if (files.length > 0) {
-      const data: ContentComments[] = (await readExcel(
-        files[0]
-      )) as ContentComments[];
+      // const data: ContentComments[] = (await readExcel(
+      //   files[0]
+      // )) as ContentComments[];
+       const data: ContentComments[] = [{
+          id: "1",
+          content: "1233"
+       }]
       // setDataRows(data.map((row) => row.firstName));
       return data;
     } else {
@@ -138,23 +138,18 @@ export function SheetApp() {
       setIsOpen(false);
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("https://graph.facebook.com/v24.0/807529795786209/posts?"+new URLSearchParams({
-          fields: "id,message,from,created_time,permalink_url,full_picture",
-        }), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": "Bearer EAAMZAgRascpkBQM6DbZCO4d27MIMZAaPFdo5tY85wjD6G2DbNf9VMzApmwKQGGwWv9HRUzcdb27wG89JtM85ZBKw7R7FD1DInfobSevZACgjxo3ILdVvP3ZAuoOkKIxeKzdNJxenYCpKh8kpl554W0p8W93VD4faWIM04Q5s6AZBN2OJFHbDpaNZAFaVeodIjsyZBgCK9tE14dm47krryoJ88hGThNqZCd7ZCMsOeD6AfImfrxCoy3kvaSNU9sZD",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-      return response;
-    };
-    const data = fetchData();
-    console.log(data);
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const result = await facebookService.getPagePosts("807529795786209");
+  //       console.log(result);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+
+  //   fetchData(); // chạy
+  // }, []);
 
   const [listAccount, setListAccount] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -239,14 +234,14 @@ export function SheetApp() {
     </Sheet>
   );
 }
-async function readExcel(file: File) {
-  const arrayBuffer = await file.arrayBuffer();
-  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+// async function readExcel(file: File) {
+//   const arrayBuffer = await file.arrayBuffer();
+//   const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-  // Lấy sheet đầu tiên
-  const sheetName = workbook.SheetNames[0];
-  const sheet = workbook.Sheets[sheetName];
-  // Chuyển sheet thành JSON
-  const json = XLSX.utils.sheet_to_json(sheet);
-  return json;
-}
+//   // Lấy sheet đầu tiên
+//   const sheetName = workbook.SheetNames[0];
+//   const sheet = workbook.Sheets[sheetName];
+//   // Chuyển sheet thành JSON
+//   const json = XLSX.utils.sheet_to_json(sheet);
+//   return json;
+// }

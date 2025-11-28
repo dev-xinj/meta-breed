@@ -12,6 +12,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Account } from "./account.types";
+import Link from "next/link";
 export const accountColumns: ColumnDef<Account>[] = [
   {
     id: "select",
@@ -56,9 +57,7 @@ export const accountColumns: ColumnDef<Account>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() =>
-          column.toggleSorting(column.getIsSorted() === "asc")
-        }
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Page name
         <ArrowUpDown />
@@ -72,9 +71,7 @@ export const accountColumns: ColumnDef<Account>[] = [
     accessorKey: "accId",
     header: () => <div className="text-center">Account Page</div>,
     cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("accId")}
-      </div>
+      <div className="text-center font-medium">{row.getValue("accId")}</div>
     ),
   },
 
@@ -96,9 +93,7 @@ export const accountColumns: ColumnDef<Account>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(account.id)
-              }
+              onClick={() => navigator.clipboard.writeText(account.id)}
             >
               Copy ID
             </DropdownMenuItem>
@@ -106,10 +101,15 @@ export const accountColumns: ColumnDef<Account>[] = [
             <DropdownMenuSeparator />
 
             <DropdownMenuItem onClick={() => alert("Clicked!")}>
-              Edit
+                Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem>Danh sách Posts</DropdownMenuItem>
+            <DropdownMenuItem asChild >
+              <Link
+                href={`/accounts/${account.accId}`}
+                className={`cursor-pointer justify-between text-gray-500 hover:bg-violet-50 hover:text-violet-500`}
+              >Danh sách Posts</Link>
+              </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

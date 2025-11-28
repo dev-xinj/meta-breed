@@ -1,56 +1,69 @@
-import { hostname } from "os";
-
-class HttpError<T> extends Error {
+export class HttpError<T> extends Error {
   status: number;
   payload: T;
-  constructor({ status, payload }: { status: number; payload: T }) {
+
+  constructor(status: number, payload: T) {
     super("Http Error");
     this.status = status;
     this.payload = payload;
   }
 }
 
-//url, body, header,method
-const HOST_BASE = "https://graph.facebook.com/";
-const VERSION_BASE = "v24.0";
-const request = async (
-  method: "GET" | "POST" | "PUT" | "DELETE",
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+
+const request = async <T>(
+  method: HttpMethod,
   url: string,
-  header: Headers,
-  body?: BodyInit
+  body?: BodyInit,
+  headers: Record<string, string> = {}
 ) => {
-  const extractUrl = url.startsWith("/")
-    ? `${HOST_BASE}/${VERSION_BASE}/${url}`
-    : `${HOST_BASE}/${VERSION_BASE}${url}`;
-  const res = await fetch(extractUrl, {
-    headers: { ...header },
-    body,
+  const baseHeaders: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const res = await fetch(url, {
     method,
+    headers: { ...baseHeaders, ...headers },
+    body: method === "GET" ? undefined : body,
   });
 
   const payload = await res.json();
-  const data = {
-    status: res.status,
-    payload: payload,
-  };
+
   if (!res.ok) {
-    throw new HttpError(data);
+    throw new HttpError(res.status, payload);
   }
-  return data;
+
+  return {
+    status: res.status,
+    payload,
+  } as { status: number; payload: T };
 };
 
 const http = {
-  get(url: string, headers: Headers, params: Record<string, string>) {
-    const queryString = new URLSearchParams(params).toString();
-    url = url.slice() + `?${queryString}`;
-    request("GET", url, headers);
-  },
-  post(
+  get<T>(
     url: string,
-    headers: Headers,
-    body: BodyInit
+    params?: Record<string, string>,
+    headers?: Record<string, string>
   ) {
-    request("GET", url, headers, body);
+    const query = params ? `?${new URLSearchParams(params)}` : "";
+    return request<T>("GET", url + query, undefined, headers);
+  },
+
+  post<T>(
+    url: string,
+    body?: unknown,
+    headers?: Record<string, string>
+  ) {
+    return request<T>("POST", url, JSON.stringify(body), headers);
+  },
+
+  put<T>(url: string, body?: unknown, headers?: Record<string, string>) {
+    return request<T>("PUT", url, JSON.stringify(body), headers);
+  },
+
+  delete<T>(url: string, headers?: Record<string, string>) {
+    return request<T>("DELETE", url, undefined, headers);
   },
 };
-export default http
+
+export default http;

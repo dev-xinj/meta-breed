@@ -17,8 +17,6 @@ interface ISubSidebarItem {
 export default function Item({ item }: { item: ISidebarItem }) {
   const { name, icon: Icon, sub, path } = item;
   const pathname = usePathname();
-  console.log("pathname " + pathname);
-  console.log("path " + path);
   const isActive = pathname === path;
 
   return (
