@@ -7,8 +7,8 @@ export function RadioGroupApp({
   value,
   onChange,
 }: {
-  value: string;
-  onChange: (val: string) => void;
+  value: string | "DEFAULT" | "REACTION" | "NONE";
+  onChange: (val: string | "DEFAULT" | "REACTION" | "NONE") => void;
 }) {
   return (
     <RadioGroup
@@ -27,7 +27,7 @@ export function RadioGroupApp({
       <div className="flex items-center gap-3">
         <RadioGroupItem value="REACTION" id="r2" />
         <Label htmlFor="r2">Sử dụng REACTION</Label>
-        <PopoverApp></PopoverApp>
+        <PopoverApp isValid ={value !== 'REACTION' && true}></PopoverApp>
       </div>
       <div className="flex items-center gap-3">
         <RadioGroupItem value="none" id="r3" />

@@ -17,21 +17,29 @@ import { DialogProps } from "@/domain/props/dialog.types";
 export function DialogModal({
   dialogProps,
   children,
+  isOpen,
+  handleOpenChange,
+  handleSave,
 }: {
   dialogProps: DialogProps;
+  isOpen: boolean
+  handleOpenChange: (val:boolean) => void;
+  handleSave: () => void;
   children?: React.ReactNode;
 }) {
-  {console.log(children)};
+  {
+    console.log(children);
+  }
   const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const handleSave = (e: React.FormEvent) => {
-    // e.preventDefault();
-    console.log("Selected accounts:", selected);
-    setOpen(false);
-    // TODO: gửi lên API hoặc xử lý logic khác
-  };
+  // const handleSave = (e: React.FormEvent) => {
+  //   // e.preventDefault();
+  //   console.log("Selected accounts:", selected);
+  //   setOpen(false);
+  //   // TODO: gửi lên API hoặc xử lý logic khác
+  // };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog  open={isOpen} onOpenChange={handleOpenChange}>
       <form>
         <DialogTrigger asChild>
           <Button
@@ -56,7 +64,7 @@ export function DialogModal({
               onChange={setSelected}
             ></MultiSelectApp>
           </div> */}
-          
+
           {children}
           <DialogFooter>
             <DialogClose asChild>

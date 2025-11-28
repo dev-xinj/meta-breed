@@ -17,20 +17,20 @@ import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
 import { SwitchApp } from "../switch/SwitchApp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   dialogPropsAccount,
   dialogPropsComment,
 } from "@/domain/props/dialog.data";
 import { FileUploadApp } from "../input/FileUploadApp";
 import { MultiSelectApp } from "../select/MultiSelectApp";
-import { Emot, Interact } from "@/domain/model/interact.types";
+import {
+  Behavior,
+  ContentComments,
+  Emot,
+  Interact,
+} from "@/domain/model/interact.types";
 import { preconnect } from "react-dom";
-type DataExcel = {
-  lastName: string;
-  firstName: string;
-  classes: string;
-};
 export function SheetApp() {
   const [interact, setInteract] = useState<Interact>(() => {
     const reactionDetails = new Map<Emot, number>([[Emot.like, 0]]);
@@ -43,6 +43,7 @@ export function SheetApp() {
       },
       comments: {
         isComment: false,
+        files: [],
         contentComments: [
           {
             id: "85732923565",
@@ -58,26 +59,106 @@ export function SheetApp() {
       return { ...prev, delayActive: Number(e.target.value) };
     });
   };
-
-  const [delayNumber, setDelayNumber] = useState<string>("");
-  const [listAccount, setListAccount] = useState<string[]>([]);
-  const [typeInteract, setTypeInteract] = useState("DEFAULT");
-  const [checkedChange, setCheckedChange] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
-  const [dataRows, setDataRows] = useState<string[]>([]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDelayNumber(e.target.value);
+  const defaultReactionDetails = new Map<Emot, number>([
+    [Emot.haha, 0],
+    [Emot.like, 0],
+    [Emot.sad, 0],
+    [Emot.wow, 0],
+  ]);
+  const handleBehavior = (val: string | "DEFAULT" | "REACTION" | "NONE") => {
+    setInteract((prev) => {
+      const reactionDetails: Map<Emot, number> =
+        val === "REACTION" ? new Map(defaultReactionDetails) : new Map();
+      return {
+        ...prev,
+        behavior: {
+          behaviorType: val,
+          reactionDetails: reactionDetails,
+        },
+      };
+    });
   };
-  const handleReadFile = async (files: File[]) => {
-    setFiles(files);
 
+  const hanldeComment = (val: boolean) => {
+    setInteract((prev) => {
+      return {
+        ...prev,
+        comments: {
+          ...prev.comments,
+          isComment: val,
+        },
+      };
+    });
+  };
+
+  const handleReadFile = async (files: File[]) => {
     if (files.length > 0) {
-      const data: DataExcel[] = (await readExcel(files[0])) as DataExcel[];
-      setDataRows(data.map((row) => row.firstName));
-      console.log("Parsed Excel:", dataRows);
+      const data: ContentComments[] = (await readExcel(
+        files[0]
+      )) as ContentComments[];
+      // setDataRows(data.map((row) => row.firstName));
+      return data;
+    } else {
+      return [];
     }
   };
+
+  const handleUploadFile = (val: File[]) => {
+    setInteract((prev) => {
+      const firstFile = [val[val.length - 1]];
+      return {
+        ...prev,
+        comments: {
+          ...prev.comments,
+          files: firstFile,
+        },
+      };
+    });
+  };
+
+  const handleContentComment = async () => {
+    const firstFile = interact.comments.files;
+    const contentComments = await handleReadFile(firstFile);
+    if (contentComments.length > 0) {
+      setInteract((prev) => {
+        setIsOpen(false);
+        return {
+          ...prev,
+          comments: {
+            ...prev.comments,
+            files: firstFile,
+            contentComments:
+              firstFile.length > 0
+                ? contentComments
+                : prev.comments.contentComments,
+          },
+        };
+      });
+    } else {
+      setIsOpen(false);
+    }
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("https://graph.facebook.com/v24.0/807529795786209/posts?"+new URLSearchParams({
+          fields: "id,message,from,created_time,permalink_url,full_picture",
+        }), {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": "Bearer EAAMZAgRascpkBQM6DbZCO4d27MIMZAaPFdo5tY85wjD6G2DbNf9VMzApmwKQGGwWv9HRUzcdb27wG89JtM85ZBKw7R7FD1DInfobSevZACgjxo3ILdVvP3ZAuoOkKIxeKzdNJxenYCpKh8kpl554W0p8W93VD4faWIM04Q5s6AZBN2OJFHbDpaNZAFaVeodIjsyZBgCK9tE14dm47krryoJ88hGThNqZCd7ZCMsOeD6AfImfrxCoy3kvaSNU9sZD",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+      return response;
+    };
+    const data = fetchData();
+    console.log(data);
+  }, []);
+
+  const [listAccount, setListAccount] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -88,13 +169,13 @@ export function SheetApp() {
           Interact
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[820px]">
-        <DialogModal key={2} dialogProps={dialogPropsAccount}>
+      <SheetContent className="sm:max-w-[820px] h-screen">
+        {/* <DialogModal  key={2} dialogProps={dialogPropsAccount}>
           <MultiSelectApp
             onChange={setListAccount}
             value={listAccount}
           ></MultiSelectApp>
-        </DialogModal>
+        </DialogModal> */}
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>
@@ -115,42 +196,44 @@ export function SheetApp() {
             />
           </div>
           <RadioGroupApp
-            onChange={setTypeInteract}
-            value={typeInteract}
+            onChange={handleBehavior}
+            value={interact.behavior.behaviorType}
           ></RadioGroupApp>
           <SwitchApp
-            onCheckedChange={setCheckedChange}
-            value={checkedChange}
+            onCheckedChange={hanldeComment}
+            value={interact.comments.isComment}
           ></SwitchApp>
-          {checkedChange && (
-            <DialogModal key={1} dialogProps={dialogPropsComment}>
+          {interact.comments.isComment && (
+            <DialogModal
+              isOpen={isOpen}
+              handleOpenChange={setIsOpen}
+              handleSave={handleContentComment}
+              key={1}
+              dialogProps={dialogPropsComment}
+            >
               <FileUploadApp
-                files={files}
-                handleSetFile={handleReadFile}
+                files={interact.comments.files}
+                handleSetFile={handleUploadFile}
                 accept=".xlsx"
               ></FileUploadApp>
             </DialogModal>
           )}
-          {checkedChange && <ScrollerApp rows={dataRows}></ScrollerApp>}
+          {interact.comments.isComment && (
+            <ScrollerApp rows={interact.comments.contentComments}></ScrollerApp>
+          )}
         </div>
-        <SheetFooter>
+        <SheetFooter className="flex flex-row justify-end">
+          <SheetClose asChild>
+            <Button variant="outline">Close</Button>
+          </SheetClose>
           <Button
             onClick={() => {
-              console.log(
-                typeInteract,
-                files,
-                listAccount,
-                delayNumber,
-                interact
-              );
+              console.log(listAccount, interact);
             }}
             type="submit"
           >
             Save changes
           </Button>
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
-          </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>

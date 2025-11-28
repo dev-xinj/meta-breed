@@ -8,11 +8,12 @@ export type Interact = {
 };
 
 export type Behavior = {
-  behaviorType: "DEFAULT" | "REACTION" | "NONE";
+  behaviorType: string | "DEFAULT" | "REACTION" | "NONE";
   reactionDetails: Map<Emot, number>;
 };
 export type Comment = {
   isComment: boolean;
+  files: File[],
   contentComments: ContentComments[];
 };
 export enum Emot {

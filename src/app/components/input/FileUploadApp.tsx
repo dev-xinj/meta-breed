@@ -60,8 +60,11 @@ export function FileUploadApp({
       <FileUploadList>
         {files.map((file, index) => (
           <FileUploadItem key={index} value={file}>
-            <FileUploadItemPreview />
-            <FileUploadItemMetadata />
+            <FileUploadItemPreview>
+              
+            </FileUploadItemPreview>
+            <FileUploadItemMetadata>
+            </FileUploadItemMetadata>
             <FileUploadItemDelete asChild>
               <Button variant="ghost" size="icon" className="size-7">
                 <X />

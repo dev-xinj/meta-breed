@@ -7,53 +7,132 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import Image from "next/image";
 
-export function PopoverApp() {
+export function PopoverApp({ ...props }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        {/* <Button variant="outline">Open popover</Button> */}
+        <Button
+          disabled={props.isValid}
+          variant="outline"
+          className=" w-12 h-6 cursor-pointer shadow-lg bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500 rounded-sm outline"
+        >
+          <Settings2></Settings2>
+        </Button>
         {/* <SlidersVertical ></SlidersVertical> */}
-        <Settings2 className=" w-16 cursor-pointer shadow-lg bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500 rounded-sm outline"></Settings2>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="leading-none font-medium">Dimensions</h4>
+            <h4 className="leading-none font-medium">Emotions</h4>
             <p className="text-muted-foreground text-sm">
-              Set the dimensions for the layer.
+              Set the emotions for the interaction.
             </p>
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Width</Label>
+              <Label htmlFor="emotionLike">
+                <Image
+                  src="/images/emotion_like.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
               <Input
-                id="width"
+                id="emotionLike"
                 defaultValue="100%"
                 className="col-span-2 h-8"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
+              <Label htmlFor="emotionLove">
+                <Image
+                  src="/images/emotion_love.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
               <Input
-                id="maxWidth"
+                id="emotionLove"
                 defaultValue="300px"
                 className="col-span-2 h-8"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
+              <Label htmlFor="emotionHaha">
+                <Image
+                  src="/images/emotion_haha.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
               <Input
-                id="height"
+                id="emotionHaha"
                 defaultValue="25px"
                 className="col-span-2 h-8"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
+              <Label htmlFor="emotionYay">
+                <Image
+                  src="/images/emotion_yay.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
               <Input
-                id="maxHeight"
-                defaultValue="none"
+                id="emotionYay"
+                defaultValue="0"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="emotionWow">
+                <Image
+                  src="/images/emotion_wow.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
+              <Input
+                id="emotionWow"
+                defaultValue="0"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="emotionSad">
+                <Image
+                  src="/images/emotion_sad.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
+              <Input
+                id="emotionSad"
+                defaultValue="0"
+                className="col-span-2 h-8"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="emotionAngry">
+                <Image
+                  src="/images/emotion_angry.png"
+                  width={50}
+                  height={50}
+                  alt="Picture of the author"
+                ></Image>
+              </Label>
+              <Input
+                id="emotionAngry"
+                defaultValue="0"
                 className="col-span-2 h-8"
               />
             </div>
