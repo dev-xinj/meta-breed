@@ -20,10 +20,11 @@ export function DialogModal({
   isOpen,
   handleOpenChange,
   handleSave,
+  ...props
 }: {
   dialogProps: DialogProps;
-  isOpen: boolean
-  handleOpenChange: (val:boolean) => void;
+  isOpen?: boolean;
+  handleOpenChange: (val: boolean) => void;
   handleSave: () => void;
   children?: React.ReactNode;
 }) {
@@ -39,11 +40,11 @@ export function DialogModal({
   //   // TODO: gửi lên API hoặc xử lý logic khác
   // };
   return (
-    <Dialog  open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <form>
         <DialogTrigger asChild>
           <Button
-            className="w-32 cursor-pointer shadow-lg bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500 ml-4 mt-5"
+            className={` w-32 cursor-pointer shadow-lg bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500 `}
             variant="outline"
           >
             {dialogProps.labelBtn}
@@ -57,14 +58,6 @@ export function DialogModal({
             {/* <DialogDescription> Phải chắc chắn rằng đã thêm tài khoản từ hệ thống </DialogDescription> */}
             <DialogDescription>{dialogProps.description}</DialogDescription>
           </DialogHeader>
-
-          {/* <div className="">
-            <MultiSelectApp
-              value={selected}
-              onChange={setSelected}
-            ></MultiSelectApp>
-          </div> */}
-
           {children}
           <DialogFooter>
             <DialogClose asChild>

@@ -37,7 +37,6 @@ export const accountColumns: ColumnDef<Account>[] = [
     enableHiding: false,
   },
 
-  // 👉 CẦN THÊM COLUMN NÀY (bị thiếu trong code cũ)
   {
     accessorKey: "id",
     header: "ID",
@@ -104,7 +103,7 @@ export const accountColumns: ColumnDef<Account>[] = [
                 Edit
             </DropdownMenuItem>
 
-            <DropdownMenuItem asChild >
+            <DropdownMenuItem  >
               <Link
                 href={`/accounts/${account.accId}`}
                 className={`cursor-pointer justify-between text-gray-500 hover:bg-violet-50 hover:text-violet-500`}

@@ -31,13 +31,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DialogModal } from "../modal/DialogModal";
+import ProfileForm from "@/app/form/AccountForm";
+import { dialogPropsComment } from "@/domain/props/dialog.data";
 
 export function DataTableApp<TData, TValue>({
   columns,
   data,
+  filter,
 }: {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filter: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,16 +74,16 @@ export function DataTableApp<TData, TValue>({
   return (
     <div className="w-full ">
       {/* Filter */}
-      <div className="flex items-center py-4">
+
+      <div className="flex flex-row justify-around items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("namePage")?.getFilterValue() as string) ?? ""}
+          placeholder={`Filter columns...`}
+          value={(table.getColumn(filter)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("namePage")?.setFilterValue(event.target.value)
+            table.getColumn(filter)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-
         {/* Column visibility */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -86,7 +91,13 @@ export function DataTableApp<TData, TValue>({
               Columns
             </Button>
           </DropdownMenuTrigger>
-
+          <DialogModal
+            dialogProps={dialogPropsComment}
+            handleSave={() => console.log("123")}
+            handleOpenChange={() => console.log("123")}
+          >
+            <ProfileForm></ProfileForm>
+          </DialogModal>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
@@ -144,7 +155,10 @@ export function DataTableApp<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import readExcel from "@/components/lib/excel";
 import {
   Sheet,
   SheetClose,
@@ -13,13 +14,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ContentComments, Emot, Interact } from "@/domain/model/interact.types";
 import {
-  ContentComments,
-  Emot,
-  Interact
-} from "@/domain/model/interact.types";
-import {
-  dialogPropsComment
+  dialogPropsAccount,
+  dialogPropsComment,
 } from "@/domain/props/dialog.data";
 import { useState } from "react";
 import { FileUploadApp } from "../input/FileUploadApp";
@@ -27,7 +25,12 @@ import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
 import { SwitchApp } from "../switch/SwitchApp";
-export function SheetApp() {
+import { MultiSelectApp } from "../select/MultiSelectApp";
+import { Account } from "@/domain/users/account.types";
+export function SheetApp({ children }: { children?: React.ReactNode }) {
+  const [listAccount, setListAccount] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenAccount, setIsOpenAccount] = useState(false);
   const [interact, setInteract] = useState<Interact>(() => {
     const reactionDetails = new Map<Emot, number>([[Emot.like, 0]]);
     return {
@@ -89,14 +92,9 @@ export function SheetApp() {
 
   const handleReadFile = async (files: File[]) => {
     if (files.length > 0) {
-      // const data: ContentComments[] = (await readExcel(
-      //   files[0]
-      // )) as ContentComments[];
-       const data: ContentComments[] = [{
-          id: "1",
-          content: "1233"
-       }]
-      // setDataRows(data.map((row) => row.firstName));
+      const data: ContentComments[] = (await readExcel(
+        files[0]
+      )) as ContentComments[];
       return data;
     } else {
       return [];
@@ -138,22 +136,18 @@ export function SheetApp() {
       setIsOpen(false);
     }
   };
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const result = await facebookService.getPagePosts("807529795786209");
-  //       console.log(result);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
 
-  //   fetchData(); // chạy
-  // }, []);
-
-  const [listAccount, setListAccount] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-
+  const handleAddAccount = () => {
+    console.log(listAccount);
+    setInteract((prev) => {
+      const newAccounts: Account[] = listAccount.map((acc) => JSON.parse(acc));
+      return {
+        ...prev,
+        accounts: [...prev.accounts, ...newAccounts],
+      };
+    });
+    setIsOpenAccount(false);
+  };
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -165,12 +159,6 @@ export function SheetApp() {
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-[820px] h-screen">
-        {/* <DialogModal  key={2} dialogProps={dialogPropsAccount}>
-          <MultiSelectApp
-            onChange={setListAccount}
-            value={listAccount}
-          ></MultiSelectApp>
-        </DialogModal> */}
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>
@@ -179,6 +167,18 @@ export function SheetApp() {
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
+            <DialogModal
+              handleOpenChange={setIsOpenAccount}
+              handleSave={handleAddAccount}
+              isOpen={isOpenAccount}
+              key={2}
+              dialogProps={dialogPropsAccount}
+            >
+              <MultiSelectApp
+                onChange={setListAccount}
+                value={listAccount}
+              ></MultiSelectApp>
+            </DialogModal>
             <Label htmlFor="sheet-demo-name">
               Random delay activation (max second){" "}
             </Label>
@@ -231,9 +231,11 @@ export function SheetApp() {
           </Button>
         </SheetFooter>
       </SheetContent>
+      {children}
     </Sheet>
   );
 }
+
 // async function readExcel(file: File) {
 //   const arrayBuffer = await file.arrayBuffer();
 //   const workbook = XLSX.read(arrayBuffer, { type: "array" });

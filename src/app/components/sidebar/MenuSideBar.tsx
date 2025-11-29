@@ -24,7 +24,7 @@ const items: ISidebarItem[] = [
   {
     name: "Accounts",
     icon: Users,
-    path: "/accounts/",
+    path: "/accounts",
   },
   {
     name: "Setting",

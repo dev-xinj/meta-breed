@@ -36,55 +36,50 @@ export const postColumns: ColumnDef<Post>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
+    
+    accessorKey: "postId",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          ID
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-center">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-center font-medium">{formatted}</div>;
-    },
+    cell: ({ row }) => <div className=" w-24 lowercase">{row.getValue("postId")}</div>,
+    enableHiding: true,
   },
   {
     accessorKey: "title",
-    header: () => {
-      return <div className="text-center">Title</div>;
-    },
-    cell: ({ row }) => {
+    header: ({ column }) => {
       return (
-        <div className="text-left text-wrap w-64  font-medium">
-          {row.getValue("title")}
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Title
+          <ArrowUpDown />
+        </Button>
       );
     },
+    cell: ({ row }) => <div className=" text-wrap w-64 lowercase">{row.getValue("title")}</div>,
   },
+  // {
+  //   accessorKey: "title",
+  //   header: () => {
+  //     return <div className="text-center">Title</div>;
+  //   },
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="text-left text-wrap w-64  font-medium">
+  //         {row.getValue("title")}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "viewNum",
     header: () => {
