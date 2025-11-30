@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,16 +12,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -31,18 +30,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DialogModal } from "../modal/DialogModal";
-import ProfileForm from "@/app/form/AccountForm";
 import { dialogPropsComment } from "@/domain/props/dialog.data";
+import { DialogModal } from "../modal/DialogModal";
+import TabFromAccount from "../tabs/TabFromAccount";
 
 export function DataTableApp<TData, TValue>({
   columns,
   data,
   filter,
+  children,
 }: {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filter: string;
+  children?: React.ReactNode;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -91,13 +92,14 @@ export function DataTableApp<TData, TValue>({
               Columns
             </Button>
           </DropdownMenuTrigger>
-          <DialogModal
+          {/* <DialogModal
             dialogProps={dialogPropsComment}
             handleSave={() => console.log("123")}
             handleOpenChange={() => console.log("123")}
           >
-            <ProfileForm></ProfileForm>
-          </DialogModal>
+            <TabFromAccount></TabFromAccount>
+          </DialogModal> */}
+          {children}
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()

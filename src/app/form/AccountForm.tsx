@@ -1,8 +1,5 @@
-"use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,10 +8,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { number, z } from "zod";
 const profileFormSchema = z.object({
+  id: z.number().optional(),
   username: z
     .string()
     .min(2, {
@@ -23,37 +23,39 @@ const profileFormSchema = z.object({
     .max(30, {
       message: "Username must not be longer than 30 characters.",
     }),
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: "Please enter a valid URL." }),
-      })
-    )
-    .optional(),
-})
-type ProfileFormValues = z.infer<typeof profileFormSchema>
-export default function ProfileForm() {
+  accessToken: z.string({
+    message: "Input token",
+  }),
+});
+export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export default function ProfileForm({
+  onHandleSubmit,
+  isBtn = false,
+  formRef,
+}: {
+  onHandleSubmit: (data: ProfileFormValues) => void;
+  isBtn: boolean;
+  formRef?: React.RefObject<ReturnType<
+    typeof useForm<ProfileFormValues>
+  > | null>;
+}) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       username: "",
-      email: "",
-      bio: "",
+      accessToken: "",
+      // email: "",
+      // bio: "",
     },
     mode: "onChange",
-  })
-  function onSubmit(data: ProfileFormValues) {
-    console.log(data)
-  }
+  });
+  if (formRef) formRef.current = form;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onHandleSubmit)}
+        className="w-2/3 space-y-6"
+      >
         <FormField
           control={form.control}
           name="username"
@@ -71,49 +73,26 @@ export default function ProfileForm() {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="email"
+          name="accessToken"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Access Token</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="your.email@example.com"
-                  type="email"
-                  {...field}
-                />
+                <Input type="password" placeholder="token" {...field} />
               </FormControl>
               <FormDescription>
-                You can manage verified email addresses in your email settings.
+                Không chia sẻ token cho bất cứ ai và không nhập access token vào
+                một trang web lạ
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Update profile</Button>
+        {isBtn && <Button type="submit">Update profile</Button>}
       </form>
     </Form>
-  )
+  );
 }

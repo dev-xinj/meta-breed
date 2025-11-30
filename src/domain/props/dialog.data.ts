@@ -12,3 +12,11 @@ export const dialogPropsComment = {
   labelBtnSecond: "Cancel",
   description: "Phải chắc chắn rằng đúng kiểu file",
 };
+
+export const dialogPropsFromAccount = {
+  labelBtn: "New Account",
+  labelModal: "Import danh sách ID Page",
+  labelBtnPrimary: "Save",
+  labelBtnSecond: "Cancel",
+  description: "Phải chắc chắn rằng đúng kiểu file",
+};

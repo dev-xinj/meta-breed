@@ -10,9 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { MultiSelectApp } from "../select/MultiSelectApp";
 import { DialogProps } from "@/domain/props/dialog.types";
+import { useState } from "react";
 
 export function DialogModal({
   dialogProps,
@@ -28,17 +27,8 @@ export function DialogModal({
   handleSave: () => void;
   children?: React.ReactNode;
 }) {
-  {
-    console.log(children);
-  }
   const [selected, setSelected] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  // const handleSave = (e: React.FormEvent) => {
-  //   // e.preventDefault();
-  //   console.log("Selected accounts:", selected);
-  //   setOpen(false);
-  //   // TODO: gửi lên API hoặc xử lý logic khác
-  // };
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <form>

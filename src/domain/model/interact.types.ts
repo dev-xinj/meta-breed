@@ -24,5 +24,5 @@ export enum Emot {
 }
 export type ContentComments = {
   id: string;
-  content: string;
+  title: string;
 };

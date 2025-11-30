@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -41,10 +42,10 @@ export function FileUploadApp({
       onFileReject={onFileReject}
       {...props}
     >
-      <FileUploadDropzone>
-        <div className="flex flex-col items-center gap-1 text-center">
+      <FileUploadDropzone className=" hover:bg-violet-50">
+        <div className="flex flex-col items-center gap-1 text-center ">
           <div className="flex items-center justify-center rounded-full border p-2.5">
-            <Upload className="size-6 text-muted-foreground" />
+            <Upload className=" size-6 text-muted-foreground" />
           </div>
           <p className="font-medium text-sm">Drag & drop files here</p>
           <p className="text-muted-foreground text-xs">
@@ -52,7 +53,7 @@ export function FileUploadApp({
           </p>
         </div>
         <FileUploadTrigger asChild>
-          <Button variant="outline" size="sm" className="mt-2 w-fit">
+          <Button  variant="outline" size="sm" className="mt-2 w-fit bg-violet-500 text-violet-50 hover:bg-violet-200 hover:text-violet-500">
             Browse files
           </Button>
         </FileUploadTrigger>
