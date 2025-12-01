@@ -1,0 +1,9 @@
+nest g resource page
+npm install --save @nestjs/typeorm typeorm PostgreSQL
+
+
+API
+api/page/list-page
+api/page/create-page
+api/page/update-page/{pageId}
+api/page/delete-page/{pageId}
