@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApiModule } from 'src/api/api.module';
 import { Page } from './entities/page.entity';
 import { PageController } from './page.controller';
 import { PageService } from './page.service';
-import { ApiFacebook } from 'src/page/apiFacebook.service';
-import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Page]), HttpModule],
+  imports: [TypeOrmModule.forFeature([Page]), ApiModule],
   controllers: [PageController],
-  providers: [PageService, ApiFacebook],
+  providers: [PageService],
 })
 export class PageModule {}

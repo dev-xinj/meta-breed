@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { encryptText } from 'src/global/encryptAES';
 import { Repository } from 'typeorm';
@@ -6,16 +10,30 @@ import { CreatePageDto } from './dto/create-page.dto';
 import { PageResponse } from './dto/PageResponse.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Page } from './entities/page.entity';
-import { ApiFacebook } from './apiFacebook.service';
+import { ApiFacebookService } from '../api/apiFacebook.service';
+
+const tokenTemp =
+  'EAAMZAgRascpkBQMzQ802BoIJ5ZAMIGeIkDyYtIi9nevs0iOZAZCBCR3X6ZB0UagSZBQEI3wSZBhPekKkA6ucGzJMdI0C0rbZANPWxxPbIKrW15r8ydnLJwe1xSAPr9PrVZBsQ8s5SOL0zttQuXDHWUQChECbhMaXOB1uPOZA4D266NCYvOZBm0DOfoNnknOxjzayErPLgRXbU9a8bruMZCH1faDeR8O0lnUVK26rERETnnPFQdULI7yRZBolooJap';
 
 @Injectable()
 export class PageService {
   constructor(
     @InjectRepository(Page) private pageRepository: Repository<Page>,
-    private apiFacebook: ApiFacebook,
+    private readonly apiFacebook: ApiFacebookService,
   ) {}
 
   async create(createPageDto: CreatePageDto) {
+    if (createPageDto && createPageDto.pageId) {
+      const page = await this.pageRepository.findOne({
+        where: { pageId: createPageDto.pageId },
+      });
+
+      if (page?.hasId) {
+        throw new ConflictException(
+          `Page Id ${createPageDto.pageId} đã tồn tại trong hệ thống`,
+        );
+      }
+    }
     const accessTokenEncrypt = await encryptText(createPageDto.accessToken);
     createPageDto.accessToken = accessTokenEncrypt;
 
@@ -34,18 +52,23 @@ export class PageService {
     );
   }
 
-  async findOne(id: number) {
-    console.log('findOne');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return await this.apiFacebook.findAllPosts();
+  async findOne(id: string) {
+    return await this.pageRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updatePageDto: UpdatePageDto) {
-    return `This action updates a #${id} page`;
+  async update(id: string, updatePageDto: UpdatePageDto) {
+    const updatePage = await this.pageRepository.preload({
+      id,
+      ...updatePageDto,
+    });
+    if (!updatePage) {
+      throw new NotFoundException(`Không tìm thấy id ${id}`);
+    }
+    return this.pageRepository.save(updatePage);
   }
 
   async remove(id: number) {
-    await this.pageRepository.delete(id);
-    return `This action removes a #${id} page`;
+    const result = await this.pageRepository.delete(id);
+    return result;
   }
 }

@@ -1,11 +1,11 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApiModule } from './api/api.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Page } from './page/entities/page.entity';
 import { PageModule } from './page/page.module';
-import { ApiFacebook } from './page/apiFacebook.service';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -20,6 +20,8 @@ import { ApiFacebook } from './page/apiFacebook.service';
       entities: [Page],
       synchronize: true,
     }),
+    PostModule,
+    ApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
