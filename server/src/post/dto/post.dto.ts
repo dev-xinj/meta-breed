@@ -1,7 +1,7 @@
 import { Page } from 'src/page/entities/page.entity';
 import { Timestamp } from 'typeorm';
 
-export class Post {
+export class PagePost {
   id: number;
   pagePostId: string;
   postName: string;
@@ -10,11 +10,17 @@ export class Post {
   attachments: Attachment[];
   createdTime: Timestamp;
   updatedTime: Timestamp;
+  constructor(init?: Partial<PagePost>) {
+    Object.assign(this, init);
+  }
 }
 
 export class Attachment {
   mediaType: string;
   mediaUrl: string;
+  constructor(init?: Partial<Attachment>) {
+    Object.assign(this, init);
+  }
 }
 
 export class PostRequest {

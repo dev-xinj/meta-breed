@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { url } from 'inspector';
 import { firstValueFrom } from 'rxjs';
+import { FBPostsResponse } from 'src/global/schema/pagePost.schema';
 // const accessToken =
 //   'EAAMZAgRascpkBQDaZBtM0eZCZAteucL3soQqr73Edg7ebNVVAVwOBxz0U96aumhBrZC8gkxZAlDNlY4GZCjunhZAMVJnfFfgSkVLbpz9V2Pfv1XXpNsezfuSNZBXlPakpzVv3Y5s3bSZBaK4pSy20pq9hAEtzmSo3DxfnQyZCYk7F1n8V8EdkpeH4Clc1mLdpStbqeaAzZBzqthKQoPFfOa5rKaoceNngfzJg96Xc8GhlH5piVaA8BShlswsnNd1';
 
@@ -16,15 +17,16 @@ export class ApiFacebookService {
   async findAllPosts(
     endpoint: string,
     token: string,
-    params?: string,
-  ): Promise<any> {
+    fields?: string,
+  ): Promise<FBPostsResponse> {
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-    // const params = {
-    //   fields: 'id,message,from,created_time,permalink_url,full_picture',
-    // };
+    const params = {
+      // fields: 'id,message,from,created_time,permalink_url,full_picture',
+      fields: fields,
+    };
 
     try {
       const response = await firstValueFrom(

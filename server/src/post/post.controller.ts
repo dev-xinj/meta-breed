@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { PostService } from './post.service';
+import { HttpMessage, ResponseData } from 'src/global/responseData';
 import { PostRequest } from './dto/post.dto';
+import { PostService } from './post.service';
 
 @Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get('list/:pageId')
-  findAll(@Param('pageId') pageId: string) {
-    console.log('pageId =', pageId);
-    return this.postService.findAll(pageId);
+  async findAll(@Param('pageId') pageId: string) {
+    const response = await this.postService.findAll(pageId);
+    return new ResponseData(200, HttpMessage.OK, response);
   }
   @Post('comments/:pageId')
   commentsBatch(

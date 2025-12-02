@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   NotFoundException,
@@ -6,10 +8,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApiFacebookService } from 'src/api/apiFacebook.service';
 import { Page } from 'src/page/entities/page.entity';
-import { Repository } from 'typeorm';
-import { PostRequest } from './dto/post.dto';
-const tokenTemp =
-  'EAAMZAgRascpkBQMzQ802BoIJ5ZAMIGeIkDyYtIi9nevs0iOZAZCBCR3X6ZB0UagSZBQEI3wSZBhPekKkA6ucGzJMdI0C0rbZANPWxxPbIKrW15r8ydnLJwe1xSAPr9PrVZBsQ8s5SOL0zttQuXDHWUQChECbhMaXOB1uPOZA4D266NCYvOZBm0DOfoNnknOxjzayErPLgRXbU9a8bruMZCH1faDeR8O0lnUVK26rERETnnPFQdULI7yRZBolooJap';
+import { Repository, Timestamp } from 'typeorm';
+import { PagePost, PostRequest } from './dto/post.dto';
+import { decryptText } from 'src/global/encryptAES';
 
 @Injectable()
 export class PostService {
@@ -26,7 +27,8 @@ export class PostService {
     if (!page) {
       throw new NotFoundException('Not Found page ');
     }
-    const tokenPage = page.accessToken;
+    // const tokenPage = page.accessToken;
+    const tokenPage = (await decryptText(page.accessToken)).toString('utf-8');
     //handle urlParams
     if (!postRequest.message.length) {
       throw new PreconditionFailedException('Field message not Empty');
@@ -34,15 +36,48 @@ export class PostService {
     const postPageId = postRequest.pagePostId;
     const urlParams = new URLSearchParams();
     urlParams.append('message', postRequest.message);
-    const result = await this.apiFacebook.commentsBatch(
+    const result = (await this.apiFacebook.commentsBatch(
       `${postPageId}/comments`,
       tokenPage,
       urlParams,
-    );
-    return;
+    )) as string;
+    return result;
   }
 
-  findAll(pageId: string) {
-    return this.apiFacebook.findAllPosts(`${pageId}/posts`, tokenTemp);
+  async findAll(pageId: string) {
+    //get page accesstoken,
+    const page = await this.pageRepository.findOne({
+      where: { pageId: pageId },
+    });
+    if (!page) {
+      throw new NotFoundException('Not Found page ');
+    }
+    const fields =
+      'id,message,story,created_time,updated_time,from,to,privacy,place,message_tags,story_tags,status_type,icon,shares,attachments{media_type,media,subattachments,type,url},comments.limit(10){id,from,message,created_time,like_count},reactions.summary(true)';
+    const tokenPage = (await decryptText(page.accessToken)).toString('utf-8');
+    const response = await this.apiFacebook.findAllPosts(
+      `${pageId}/posts`,
+      tokenPage,
+      fields,
+    );
+    return response;
   }
+}
+export interface FbPost {
+  id: string;
+  message?: string;
+  created_time?: Timestamp | undefined;
+  updated_time?: Timestamp | undefined;
+  comments?: {
+    data?: { id: string; message: string; created_time: string }[];
+  };
+}
+export function convertFbPost(fb: FbPost): PagePost {
+  return new PagePost({
+    pagePostId: fb.id,
+    postName: fb.message ?? '',
+    createdTime: fb.created_time ?? undefined,
+    updatedTime: fb.updated_time ?? undefined,
+    totalComments: fb.comments?.data?.length ?? 0,
+  });
 }
