@@ -25,6 +25,6 @@ export class Attachment {
 
 export class PostRequest {
   pagePostId: string;
-  pageId: string;
+  pageUUID: string;
   message: string;
 }

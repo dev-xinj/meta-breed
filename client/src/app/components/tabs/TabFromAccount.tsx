@@ -9,16 +9,14 @@ const TabFromAccount = ({
   onHandleImportExcel,
   handleActiveTab,
   activeTab,
-  uploadedFiles,
   tabValue,
   dataImport,
   formRef,
 }: {
   onHandleSubmitForm: (val: ProfileFormValues) => void;
-  onHandleImportExcel: (val: File[]) => void;
+  onHandleImportExcel: (val: File) => void;
   handleActiveTab: (val: string) => void;
   activeTab: string;
-  uploadedFiles: File[];
   tabValue?: number;
   dataImport?: DynamicRow[];
   formRef?: React.RefObject<ReturnType<
@@ -65,9 +63,9 @@ const TabFromAccount = ({
         <TabsContent key={"importExcel"} value={"importExcel"}>
           <div className="flex flex-row ">
             <FileUploadApp
-              files={uploadedFiles}
+              // files={uploadedFiles}
               accept=".xlsx"
-              handleSetFile={onHandleImportExcel}
+              onFileAccept={onHandleImportExcel}
             ></FileUploadApp>
             <ScrollerApp
               rows={!dataImport?.length ? [] : dataImport}

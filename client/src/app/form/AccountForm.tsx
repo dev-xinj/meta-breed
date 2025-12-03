@@ -12,20 +12,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { number, z } from "zod";
+import { z } from "zod";
 const profileFormSchema = z.object({
   id: z.number().optional(),
-  username: z
-    .string()
+  pageUUID: z.string().trim().min(1, { message: "You must enter a UUID" }),
+  pageName: z
+    .string().trim()
     .min(2, {
       message: "Username must be at least 2 characters.",
     })
-    .max(30, {
+    .max(50, {
       message: "Username must not be longer than 30 characters.",
     }),
-  accessToken: z.string({
-    message: "Input token",
-  }),
+  accessToken: z.string().trim().min(1, { message: "You must enter a TOKEN" }),
 });
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 export default function ProfileForm({
@@ -42,7 +41,8 @@ export default function ProfileForm({
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      username: "",
+      pageName: "",
+      pageUUID: "",
       accessToken: "",
       // email: "",
       // bio: "",
@@ -56,12 +56,13 @@ export default function ProfileForm({
         onSubmit={form.handleSubmit(onHandleSubmit)}
         className="w-2/3 space-y-6"
       >
+        {/* Fanpage name */}
         <FormField
           control={form.control}
-          name="username"
+          name="pageName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Page Name</FormLabel>
               <FormControl>
                 <Input placeholder="shadcn" {...field} />
               </FormControl>
@@ -73,7 +74,22 @@ export default function ProfileForm({
             </FormItem>
           )}
         />
-
+        {/* UUID */}
+        <FormField
+          control={form.control}
+          name="pageUUID"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>UUID</FormLabel>
+              <FormControl>
+                <Input placeholder="uuid" {...field} />
+              </FormControl>
+              <FormDescription>Nhập ID fanpage</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Access token */}
         <FormField
           control={form.control}
           name="accessToken"

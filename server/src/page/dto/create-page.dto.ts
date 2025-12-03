@@ -1,6 +1,6 @@
 export class CreatePageDto {
   pageName: string;
-  pageId: string;
+  pageUUID: string;
   accessToken: string;
-  status: 'idle' | 'processing';
+  status: 'IDLE' | 'PROCESSING';
 }

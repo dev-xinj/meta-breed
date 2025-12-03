@@ -16,7 +16,12 @@ import { useUploadFileStore } from "@/hooks/useUploadFile";
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-export function FileUploadApp({ ...props }) {
+export function FileUploadApp({
+  onFileAccept,
+  ...props
+}: {
+  onFileAccept?: (e: File) => void;
+}) {
   const onFileReject = React.useCallback((file: File, message: string) => {
     toast(message, {
       description: `"${
@@ -33,6 +38,7 @@ export function FileUploadApp({ ...props }) {
       value={files}
       onValueChange={(val: File[]) => setFiles(val)}
       onFileReject={onFileReject}
+      onFileAccept={onFileAccept}
       {...props}
     >
       <FileUploadDropzone className=" hover:bg-violet-50">

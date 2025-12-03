@@ -12,6 +12,7 @@ import { HttpMessage, ResponseData } from 'src/global/responseData';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { PageService } from './page.service';
+import { PageResponse } from './dto/PageResponse.dto';
 
 @Controller('page')
 export class PageController {
@@ -20,7 +21,7 @@ export class PageController {
   @Post()
   async create(
     @Body() createPageDto: CreatePageDto,
-  ): Promise<ResponseData<CreatePageDto>> {
+  ): Promise<ResponseData<PageResponse>> {
     const response = await this.pageService.create(createPageDto);
     return new ResponseData(HttpStatus.OK, HttpMessage.OK, response);
   }

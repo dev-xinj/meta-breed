@@ -7,9 +7,9 @@ export class Page extends BaseEntity {
   @Column()
   pageName: string;
   @Column()
-  pageId: string;
+  pageUUID: string;
   @Column()
   accessToken: string;
   @Column()
-  status: 'idle' | 'processing';
+  status: 'IDLE' | 'PROCESSING';
 }

@@ -8,16 +8,16 @@ import { PostService } from './post.service';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Get('list/:pageId')
-  async findAll(@Param('pageId') pageId: string) {
-    const response = await this.postService.findAll(pageId);
+  @Get('list/:pageUUID')
+  async findAll(@Param('pageUUID') pageUUID: string) {
+    const response = await this.postService.findAll(pageUUID);
     return new ResponseData(200, HttpMessage.OK, response);
   }
-  @Post('comments/:pageId')
+  @Post('comments/:pageUUID')
   commentsBatch(
-    @Param('pageId') pagePostId: string,
+    @Param('pageUUID') pageUUID: string,
     @Body() payload: PostRequest,
   ) {
-    return this.postService.commentsBatch(pagePostId, payload);
+    return this.postService.commentsBatch(pageUUID, payload);
   }
 }

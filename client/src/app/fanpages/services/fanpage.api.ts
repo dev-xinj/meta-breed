@@ -3,17 +3,9 @@ import { FanpageCreate } from "../types/fanpage-create.type";
 import { FanpageUpdate } from "../types/fanpage-update.type";
 const BASE_URL = "http://localhost:3000/page";
 
-export const findAllFanpage = () => {
-  http
-    .get(`${BASE_URL}/list`)
-    .then((result) => {
-      console.log(result);
-      return result;
-    })
-    .catch((error) => {
-      console.log(error);
-      return error;
-    });
+export const findAllFanpage = async () => {
+  const response = await http.get(`${BASE_URL}/list`);
+  return response.payload;
 };
 
 export const findOneFanpage = (fanpageId: number) => {
@@ -41,7 +33,10 @@ export const saveFanpage = (fanpageCreate: FanpageCreate) => {
       return error;
     });
 };
-export const updateFanpage = (fanpageId: number, fanpageUpdate: FanpageUpdate) => {
+export const updateFanpage = (
+  fanpageId: number,
+  fanpageUpdate: FanpageUpdate
+) => {
   http
     .put(`${BASE_URL}/update/${fanpageId}`, fanpageUpdate)
     .then((result) => {

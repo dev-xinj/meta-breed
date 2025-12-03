@@ -19,10 +19,10 @@ export class PostService {
     private readonly apiFacebook: ApiFacebookService,
   ) {}
 
-  async commentsBatch(pageId: string, postRequest: PostRequest) {
+  async commentsBatch(pageUUID: string, postRequest: PostRequest) {
     //get page accesstoken,
     const page = await this.pageRepository.findOne({
-      where: { pageId: pageId },
+      where: { pageUUID: pageUUID },
     });
     if (!page) {
       throw new NotFoundException('Not Found page ');
@@ -47,7 +47,7 @@ export class PostService {
   async findAll(pageId: string) {
     //get page accesstoken,
     const page = await this.pageRepository.findOne({
-      where: { pageId: pageId },
+      where: { pageUUID: pageId },
     });
     if (!page) {
       throw new NotFoundException('Not Found page ');

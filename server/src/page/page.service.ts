@@ -23,21 +23,27 @@ export class PageService {
   ) {}
 
   async create(createPageDto: CreatePageDto) {
-    if (createPageDto && createPageDto.pageId) {
+    if (createPageDto && createPageDto.pageUUID) {
       const page = await this.pageRepository.findOne({
-        where: { pageId: createPageDto.pageId },
+        where: { pageUUID: createPageDto.pageUUID },
       });
 
       if (page?.hasId) {
         throw new ConflictException(
-          `Page Id ${createPageDto.pageId} đã tồn tại trong hệ thống`,
+          `Page Id ${createPageDto.pageUUID} đã tồn tại trong hệ thống`,
         );
       }
     }
     const accessTokenEncrypt = await encryptText(createPageDto.accessToken);
     createPageDto.accessToken = accessTokenEncrypt;
-
-    return this.pageRepository.save(createPageDto);
+    console.log(createPageDto);
+    createPageDto.status = 'PROCESSING';
+    const result = await this.pageRepository.save(createPageDto);
+    return new PageResponse({
+      id: result.id,
+      pageName: result.pageName,
+      pageUUID: result.pageUUID,
+    });
   }
 
   async findAll(): Promise<PageResponse[]> {
@@ -47,7 +53,7 @@ export class PageService {
         new PageResponse({
           id: page.id,
           pageName: page.pageName,
-          pageId: page.pageId,
+          pageUUID: page.pageUUID,
         }),
     );
   }
