@@ -51,13 +51,13 @@ const http = {
 
   post<T>(
     url: string,
-    body?: unknown,
+    body?: Record<string, string>,
     headers?: Record<string, string>
   ) {
     return request<T>("POST", url, JSON.stringify(body), headers);
   },
 
-  put<T>(url: string, body?: unknown, headers?: Record<string, string>) {
+  put<T>(url: string, body?: Record<string, string>, headers?: Record<string, string>) {
     return request<T>("PUT", url, JSON.stringify(body), headers);
   },
 

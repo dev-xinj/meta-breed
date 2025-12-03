@@ -1,7 +1,5 @@
-import { DialogModal } from "@/app/components/modal/DialogModal";
 import { SheetApp } from "@/app/components/sheet/SheetApp";
 import PostTableApp from "@/app/components/table/PostTableApp";
-import { dialogPropsFromAccount } from "@/domain/props/dialog.data";
 
 export default async function PostPage({
   params,
@@ -12,10 +10,8 @@ export default async function PostPage({
   // return <div>The dynamic route is {accountId}</div>;
   return (
     <div>
-      <SheetApp>
-        
-        <PostTableApp></PostTableApp>
-      </SheetApp>
+      <SheetApp></SheetApp>
+      <PostTableApp pageId={accountId}></PostTableApp>
     </div>
   );
 }

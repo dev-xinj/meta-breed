@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DialogProps } from "@/domain/props/dialog.types";
-import { useState } from "react";
 
 export function DialogModal({
   dialogProps,
@@ -27,8 +26,6 @@ export function DialogModal({
   handleSave: () => void;
   children?: React.ReactNode;
 }) {
-  const [selected, setSelected] = useState<string[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <form>

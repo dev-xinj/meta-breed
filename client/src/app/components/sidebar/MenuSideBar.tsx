@@ -22,9 +22,9 @@ const items: ISidebarItem[] = [
     path: "/",
   },
   {
-    name: "Accounts",
+    name: "Fanpages",
     icon: Users,
-    path: "/accounts",
+    path: "/fanpages",
   },
   {
     name: "Setting",

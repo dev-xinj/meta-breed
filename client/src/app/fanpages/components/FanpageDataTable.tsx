@@ -1,17 +1,17 @@
 "use client";
+import { FanpageColumns } from "@/app/fanpages/common/fanpage.columns";
+import { FanpageColumnData } from "@/app/fanpages/mock/fanpage.data";
 import { ProfileFormValues } from "@/app/form/AccountForm";
-import { AccountData } from "@/app/mock/account.data";
 import readExcel from "@/components/lib/excel";
 import { ContentComments } from "@/domain/model/interact.types";
 import { dialogPropsFromAccount } from "@/domain/props/dialog.data";
-import { accountColumns } from "@/domain/users/account.columns";
 import { useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { DialogModal } from "../modal/DialogModal";
-import TabFromAccount from "../tabs/TabFromAccount";
-import { DataTableApp } from "./DataTableApp";
+import { DialogModal } from "../../components/modal/DialogModal";
+import { DataTableApp } from "../../components/table/DataTableApp";
+import TabFromAccount from "../../components/tabs/TabFromAccount";
 
-export default function AccountTableApp() {
+export default function FanpageDataTable() {
   const [formData, setFormData] = useState<ProfileFormValues[]>(() => [
     {
       id: undefined,
@@ -19,6 +19,8 @@ export default function AccountTableApp() {
       accessToken: "",
     },
   ]);
+
+  
   const [activeTab, setActiveTab] = useState("input");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [dataImport, setDataImport] = useState<ContentComments[]>([]);
@@ -36,7 +38,7 @@ export default function AccountTableApp() {
   const handleSubmitOutside = () => {
     if (activeTab !== "input") {
       setFormData(accountSheet);
-      console.log(formData)
+      console.log(formData);
       return;
     }
     if (!formRef.current) return;
@@ -60,7 +62,11 @@ export default function AccountTableApp() {
     }
   };
   return (
-    <DataTableApp filter="namePage" columns={accountColumns} data={AccountData}>
+    <DataTableApp
+      filter="pageName"
+      columns={FanpageColumns}
+      data={FanpageColumnData}
+    >
       <DialogModal
         dialogProps={dialogPropsFromAccount}
         handleSave={handleSubmitOutside}

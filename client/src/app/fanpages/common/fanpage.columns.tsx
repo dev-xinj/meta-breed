@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Account } from "./account.types";
+import { Account } from "../../../domain/users/account.types";
 import Link from "next/link";
-export const accountColumns: ColumnDef<Account>[] = [
+import { Fanpage } from "@/app/fanpages/types/fanpage.type";
+export const FanpageColumns: ColumnDef<Fanpage>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -52,25 +53,25 @@ export const accountColumns: ColumnDef<Account>[] = [
     ),
   },
   {
-    accessorKey: "namePage",
+    accessorKey: "pageName",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Page name
+        Fanpage
         <ArrowUpDown />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("namePage")}</div>
+      <div className="lowercase">{row.getValue("pageName")}</div>
     ),
   },
   {
-    accessorKey: "accId",
-    header: () => <div className="text-center">Account Page</div>,
+    accessorKey: "pageUUID",
+    header: () => <div className="text-center">UUID</div>,
     cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("accId")}</div>
+      <div className="text-center font-medium">{row.getValue("pageUUID")}</div>
     ),
   },
 
@@ -78,7 +79,7 @@ export const accountColumns: ColumnDef<Account>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const account = row.original;
+      const fanpage = row.original;
 
       return (
         <DropdownMenu>
@@ -92,7 +93,7 @@ export const accountColumns: ColumnDef<Account>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(account.id)}
+              onClick={() => navigator.clipboard.writeText(fanpage.id)}
             >
               Copy ID
             </DropdownMenuItem>
@@ -105,9 +106,9 @@ export const accountColumns: ColumnDef<Account>[] = [
 
             <DropdownMenuItem  >
               <Link
-                href={`/accounts/${account.accId}`}
+                href={`/fanpages/${fanpage.pageUUID}`}
                 className={`cursor-pointer justify-between text-gray-500 hover:bg-violet-50 hover:text-violet-500`}
-              >Danh sách Posts</Link>
+              >Danh sách posts</Link>
               </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

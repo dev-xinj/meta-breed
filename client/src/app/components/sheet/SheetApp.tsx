@@ -1,9 +1,10 @@
 "use client";
 // import * as XLSX from "xlsx";
+import { FanpageColumnData } from "@/app/fanpages/mock/fanpage.data";
+import readExcel from "@/components/lib/excel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import readExcel from "@/components/lib/excel";
 import {
   Sheet,
   SheetClose,
@@ -15,23 +16,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ContentComments, Emot, Interact } from "@/domain/model/interact.types";
-import {
-  dialogPropsAccount,
-  dialogPropsComment,
-} from "@/domain/props/dialog.data";
+import { dialogPropsComment } from "@/domain/props/dialog.data";
+import { Account } from "@/domain/users/account.types";
+import { useMultiSelectStore } from "@/hooks/useMultiSelect";
+import { useUploadFileStore } from "@/hooks/useUploadFile";
 import { useState } from "react";
 import { FileUploadApp } from "../input/FileUploadApp";
 import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
 import { ScrollerApp } from "../scroller/ScrollerApp";
+import { MultiselectState } from "../select/MultiSelectState";
 import { SwitchApp } from "../switch/SwitchApp";
-import { MultiSelectApp } from "../select/MultiSelectApp";
-import { Account } from "@/domain/users/account.types";
 export function SheetApp({ children }: { children?: React.ReactNode }) {
-  const [listAccount, setListAccount] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenAccount, setIsOpenAccount] = useState(false);
-  const [interact, setInteract] = useState<Interact>(() => {
+  const [isOpenFanpage, setIsOpenFanpage] = useState(false);
+  const selectedFanpage = useMultiSelectStore((state) => state.selected);
+  const files = useUploadFileStore((state) => state.files);
+  const initInteract = () => {
     const reactionDetails = new Map<Emot, number>([[Emot.like, 0]]);
     return {
       accounts: [],
@@ -51,8 +52,8 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
         ],
       },
     };
-  });
-
+  };
+  const [interact, setInteract] = useState<Interact>(() => initInteract());
   const handleDelayActive = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInteract((prev) => {
       return { ...prev, delayActive: Number(e.target.value) };
@@ -64,6 +65,8 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
     [Emot.sad, 0],
     [Emot.wow, 0],
   ]);
+
+  // selected = useMultiSelectStore((state) => state.selected);
   const handleBehavior = (val: string | "DEFAULT" | "REACTION" | "NONE") => {
     setInteract((prev) => {
       const reactionDetails: Map<Emot, number> =
@@ -115,7 +118,8 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
   };
 
   const handleContentComment = async () => {
-    const firstFile = interact.comments.files;
+    handleUploadFile(files);
+    const firstFile = [files[files.length - 1]];
     const contentComments = await handleReadFile(firstFile);
     if (contentComments.length > 0) {
       setInteract((prev) => {
@@ -136,18 +140,24 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
       setIsOpen(false);
     }
   };
-
-  const handleAddAccount = () => {
-    console.log(listAccount);
+  const handleAddFanpage = () => {
     setInteract((prev) => {
-      const newAccounts: Account[] = listAccount.map((acc) => JSON.parse(acc));
+      const newFanpages: Account[] = selectedFanpage.map((acc) =>
+        JSON.parse(acc)
+      );
       return {
         ...prev,
-        accounts: [...prev.accounts, ...newAccounts],
+        accounts: [...newFanpages],
       };
     });
-    setIsOpenAccount(false);
+    setIsOpenFanpage(false);
   };
+  const options = FanpageColumnData.map((row) => {
+    return {
+      label: row.pageName || row.pageUUID,
+      value: JSON.stringify(row),
+    };
+  });
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -168,16 +178,16 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
             <DialogModal
-              handleOpenChange={setIsOpenAccount}
-              handleSave={handleAddAccount}
-              isOpen={isOpenAccount}
+              handleOpenChange={setIsOpenFanpage}
+              handleSave={handleAddFanpage}
+              isOpen={isOpenFanpage}
               key={2}
-              dialogProps={dialogPropsAccount}
+              dialogProps={dialogPropsComment}
             >
-              <MultiSelectApp
-                onChange={setListAccount}
-                value={listAccount}
-              ></MultiSelectApp>
+              <MultiselectState
+                selected={selectedFanpage}
+                options={options}
+              ></MultiselectState>
             </DialogModal>
             <Label htmlFor="sheet-demo-name">
               Random delay activation (max second){" "}
@@ -206,11 +216,7 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
               key={1}
               dialogProps={dialogPropsComment}
             >
-              <FileUploadApp
-                files={interact.comments.files}
-                handleSetFile={handleUploadFile}
-                accept=".xlsx"
-              ></FileUploadApp>
+              <FileUploadApp accept=".xlsx"></FileUploadApp>
             </DialogModal>
           )}
           {interact.comments.isComment && (
@@ -221,12 +227,7 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>
-          <Button
-            onClick={() => {
-              console.log(listAccount, interact);
-            }}
-            type="submit"
-          >
+          <Button onClick={() => console.log(interact)} type="submit">
             Save changes
           </Button>
         </SheetFooter>
@@ -235,15 +236,3 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
     </Sheet>
   );
 }
-
-// async function readExcel(file: File) {
-//   const arrayBuffer = await file.arrayBuffer();
-//   const workbook = XLSX.read(arrayBuffer, { type: "array" });
-
-//   // Lấy sheet đầu tiên
-//   const sheetName = workbook.SheetNames[0];
-//   const sheet = workbook.Sheets[sheetName];
-//   // Chuyển sheet thành JSON
-//   const json = XLSX.utils.sheet_to_json(sheet);
-//   return json;
-// }

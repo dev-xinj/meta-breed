@@ -1,5 +1,5 @@
 export const dialogPropsAccount = {
-  labelBtn: "Add Account",
+  labelBtn: "Add Fanpage",
   labelModal: "Chọn tài khoản để tương tác",
   labelBtnPrimary: "Save",
   labelBtnSecond: "Cancel",

@@ -1,31 +1,24 @@
 "use client";
-import { AccountData } from "@/app/mock/account.data";
+import { FanpageColumnData } from "@/app/fanpages/mock/fanpage.data";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { useEffect, useState } from "react";
-
-// const options = [
-//   { label: "Small Option", value: "small" },
-//   { label: "Medium Option", value: "medium" },
-//   { label: "Large Option with Long Text", value: "large" },
-// ];
+import { useState } from "react";
 
 // Different sizing options
 export function MultiSelectApp({
   value,
   onChange,
 }: {
-  
   value: any[];
   onChange: (val: any[]) => void;
 }) {
-  const [options, setOptions ]= useState(()=>{
-    return AccountData.map((row)=>{
+  const [options, setOptions] = useState(() => {
+    return FanpageColumnData.map((row) => {
       return {
-        label: row.namePage,
-        value: JSON.stringify(row)
-      }
-    })
-  })
+        label: row.pageName || row.pageUUID,
+        value: JSON.stringify(row),
+      };
+    });
+  });
   return (
     <div className="space-y-6">
       {/* Large size */}
