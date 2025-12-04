@@ -27,7 +27,7 @@ export class PageController {
   }
 
   @Get('detail/:id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.pageService.findOne(id);
   }
   @Get('list')
@@ -37,12 +37,12 @@ export class PageController {
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updatePageDto: UpdatePageDto) {
+  update(@Param('id') id: number, @Body() updatePageDto: UpdatePageDto) {
     return this.pageService.update(id, updatePageDto);
   }
 
   @Delete('delete/:id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.pageService.remove(+id);
   }
 }

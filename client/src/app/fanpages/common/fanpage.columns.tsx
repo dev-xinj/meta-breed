@@ -13,7 +13,13 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-export const FanpageColumns: ColumnDef<Fanpage>[] = [
+export const FanpageColumns = ({
+  onDelete,
+  onEdit,
+}: {
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+}): ColumnDef<Fanpage>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -101,13 +107,13 @@ export const FanpageColumns: ColumnDef<Fanpage>[] = [
 
             <DropdownMenuItem
               className="cursor-pointer justify-between hover:bg-violet-50 hover:text-violet-500"
-              onClick={() => alert("Clicked delete!")}
+              onClick={() => onDelete(fanpage.id)}
             >
               Delete
             </DropdownMenuItem>
             <DropdownMenuItem
               className={`cursor-pointer justify-between hover:bg-violet-50 hover:text-violet-500`}
-              onClick={() => alert("Clicked edit!")}
+              onClick={() => onEdit(fanpage.id)}
             >
               Edit
             </DropdownMenuItem>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 const profileFormSchema = z.object({
@@ -31,24 +32,30 @@ export default function ProfileForm({
   onHandleSubmit,
   isBtn = false,
   formRef,
+  initialData,
 }: {
   onHandleSubmit: (data: ProfileFormValues) => void;
   isBtn: boolean;
   formRef?: React.RefObject<ReturnType<
     typeof useForm<ProfileFormValues>
   > | null>;
+  initialData?: ProfileFormValues | null
 }) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       pageName: "",
       pageUUID: "",
       accessToken: "",
-      // email: "",
-      // bio: "",
     },
     mode: "onChange",
   });
+  useEffect(() => {
+    if (initialData) {
+      console.log('effect form')
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
   if (formRef) formRef.current = form;
   return (
     <Form {...form}>

@@ -1,11 +1,14 @@
 import http from "@/components/lib/http";
 import { FanpageCreate } from "../types/fanpage-create.type";
 import { FanpageUpdate } from "../types/fanpage-update.type";
+import { ResponseData, ResponseDataSchema } from "../schemas/response.schema";
+import { FanpageSchema } from "../schemas/fanpage.schema";
 const BASE_URL = "http://localhost:3000/page";
 
 export const findAllFanpage = async () => {
   const response = await http.get(`${BASE_URL}/list`);
-  return response.payload;
+  const fanpages = ResponseDataSchema.parse(response.payload);
+  return fanpages;
 };
 
 export const findOneFanpage = (fanpageId: number) => {
@@ -21,9 +24,11 @@ export const findOneFanpage = (fanpageId: number) => {
     });
 };
 
-export const saveFanpage = async (fanpageCreate: FanpageCreate) => {
+export const saveFanpage = async (
+  fanpageCreate: FanpageCreate
+): Promise<ResponseData> => {
   const response = await http.post(BASE_URL, fanpageCreate);
-  return response.payload;
+  return ResponseDataSchema.parse(response.payload);
 };
 export const updateFanpage = (
   fanpageId: number,

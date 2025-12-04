@@ -11,9 +11,7 @@ import { PageResponse } from './dto/PageResponse.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Page } from './entities/page.entity';
 import { ApiFacebookService } from '../api/apiFacebook.service';
-
-const tokenTemp =
-  'EAAMZAgRascpkBQMzQ802BoIJ5ZAMIGeIkDyYtIi9nevs0iOZAZCBCR3X6ZB0UagSZBQEI3wSZBhPekKkA6ucGzJMdI0C0rbZANPWxxPbIKrW15r8ydnLJwe1xSAPr9PrVZBsQ8s5SOL0zttQuXDHWUQChECbhMaXOB1uPOZA4D266NCYvOZBm0DOfoNnknOxjzayErPLgRXbU9a8bruMZCH1faDeR8O0lnUVK26rERETnnPFQdULI7yRZBolooJap';
+import { PageStatus } from './entities/page.enum';
 
 @Injectable()
 export class PageService {
@@ -37,7 +35,7 @@ export class PageService {
     const accessTokenEncrypt = await encryptText(createPageDto.accessToken);
     createPageDto.accessToken = accessTokenEncrypt;
     console.log(createPageDto);
-    createPageDto.status = 'PROCESSING';
+    createPageDto.status = PageStatus.PROCESSING;
     const result = await this.pageRepository.save(createPageDto);
     return new PageResponse({
       id: result.id,
@@ -58,19 +56,22 @@ export class PageService {
     );
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     return await this.pageRepository.findOne({ where: { id } });
   }
 
-  async update(id: string, updatePageDto: UpdatePageDto) {
-    const updatePage = await this.pageRepository.preload({
-      id,
-      ...updatePageDto,
-    });
-    if (!updatePage) {
+  async update(id: number, updatePageDto: UpdatePageDto) {
+    // const updatePage = await this.pageRepository.preload({
+    //   id,
+    //   ...updatePageDto,
+    // });
+    // console.log(updatePage);
+    const page = await this.pageRepository.findOne({ where: { id } });
+    if (!page) {
       throw new NotFoundException(`Không tìm thấy id ${id}`);
     }
-    return this.pageRepository.save(updatePage);
+    const updated = this.pageRepository.merge(page, updatePageDto);
+    return this.pageRepository.save(updated);
   }
 
   async remove(id: number) {

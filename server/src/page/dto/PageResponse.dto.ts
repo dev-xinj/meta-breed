@@ -1,5 +1,5 @@
 export class PageResponse {
-  id: string;
+  id: number;
   pageName: string;
   pageUUID: string;
   constructor(partial: Partial<PageResponse>) {

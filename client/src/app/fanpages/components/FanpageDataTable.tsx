@@ -1,6 +1,6 @@
 "use client";
 import { FanpageColumns } from "@/app/fanpages/common/fanpage.columns";
-import { ProfileFormValues } from "@/app/form/AccountForm";
+import ProfileForm, { ProfileFormValues } from "@/app/form/AccountForm";
 import readExcel from "@/components/lib/excel";
 import { ContentComments } from "@/domain/model/interact.types";
 import { dialogPropsFromAccount } from "@/domain/props/dialog.data";
@@ -12,20 +12,53 @@ import TabFromAccount from "../../components/tabs/TabFromAccount";
 import { findAllFanpage, saveFanpage } from "../services/fanpage.service";
 import { FanpageCreate } from "../types/fanpage-create.type";
 import { Fanpage } from "../types/fanpage.type";
+import { PageStatus } from "@/app/enums/page-status.enum";
 
 export default function FanpageDataTable() {
   const [fanpages, setFanpages] = useState<Fanpage[]>([]);
+  const [action, setAction] = useState("NEW");
+  const [dataEdit, setDataEdit] = useState<ProfileFormValues>({
+    pageUUID: "",
+    pageName: "",
+    accessToken: "",
+    id: undefined,
+  });
   const [isFormAddFanpage, setIsFormAddFanpage] = useState(false);
+
   const handleFindAllFanpage = () => {
     findAllFanpage()
       .then((result) => {
         setFanpages(result?.data);
       })
       .catch((error) => {
-        console.log(error);
         return error;
       });
   };
+  const handleDelete = (id: string) => {
+    setFanpages((prev) => prev.filter((x) => x.id !== id));
+    console.log("alert delete: " + id);
+  };
+  const handleEdit = (id: string) => {
+    console.log("alert edit: " + id);
+    const [rawEdit] = fanpages.filter((item: Fanpage) => item.id === id);
+    console.log(rawEdit);
+    setDataEdit({
+      pageUUID: rawEdit.pageUUID || "",
+      id: +rawEdit.id,
+      pageName: rawEdit.pageName || "",
+      accessToken: "",
+    });
+    setIsFormAddFanpage(true);
+    setAction("EDIT");
+  };
+  // function handleOnValueChange(val: boolean): void {
+  //   console.log(dataEdit);
+  //   setIsFormAddFanpage(val);
+  // }
+  const columns = FanpageColumns({
+    onDelete: handleDelete,
+    onEdit: handleEdit,
+  });
   useEffect(() => {
     handleFindAllFanpage();
   }, []);
@@ -38,13 +71,14 @@ export default function FanpageDataTable() {
     console.log(val);
     setActiveTab(val);
   };
-  const handleSubmitForm = (data: FanpageCreate) => {
-    const response = saveFanpage(data);
-    if (response?.success) {
-      setIsFormAddFanpage(false);
-      handleFindAllFanpage();
+  const handleSubmitForm = async (data: FanpageCreate) => {
+    if (action === "NEW") {
+      const response = await saveFanpage(data);
+      if (response?.success) {
+        setIsFormAddFanpage(false);
+        handleFindAllFanpage();
+      }
     }
-    // setFormData([data]);
   };
   const formRef = useRef<UseFormReturn<ProfileFormValues> | null>(null);
   const handleSubmitOutside = async () => {
@@ -80,23 +114,33 @@ export default function FanpageDataTable() {
       );
     }
   };
+
   return (
-    <DataTableApp filter="pageName" columns={FanpageColumns} data={fanpages}>
+    <DataTableApp filter="pageName" columns={columns} data={fanpages}>
       <DialogModal
         dialogProps={dialogPropsFromAccount}
         handleSave={handleSubmitOutside}
         isOpen={isFormAddFanpage}
         handleOpenChange={setIsFormAddFanpage}
       >
-        <TabFromAccount
-          activeTab={activeTab}
-          handleActiveTab={handleActiveTab}
-          onHandleImportExcel={handleImportExcel}
-          onHandleSubmitForm={handleSubmitForm}
-          dataImport={dataImport}
-          formRef={formRef}
-          tabValue={1}
-        ></TabFromAccount>
+        {action === "NEW" ? (
+          <TabFromAccount
+            activeTab={activeTab}
+            handleActiveTab={handleActiveTab}
+            onHandleImportExcel={handleImportExcel}
+            onHandleSubmitForm={handleSubmitForm}
+            dataImport={dataImport}
+            formRef={formRef}
+            tabValue={1}
+          ></TabFromAccount>
+        ) : (
+          <ProfileForm
+            isBtn={false}
+            onHandleSubmit={handleSubmitForm}
+            formRef={formRef}
+            initialData={dataEdit}
+          ></ProfileForm>
+        )}
       </DialogModal>
     </DataTableApp>
   );
