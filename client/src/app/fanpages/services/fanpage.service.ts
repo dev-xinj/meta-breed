@@ -21,17 +21,9 @@ export const findOneFanpage = (fanpageId: number) => {
     });
 };
 
-export const saveFanpage = (fanpageCreate: FanpageCreate) => {
-  http
-    .post(BASE_URL, fanpageCreate)
-    .then((result) => {
-      console.log(result);
-      return result;
-    })
-    .catch((error) => {
-      console.log(error);
-      return error;
-    });
+export const saveFanpage = async (fanpageCreate: FanpageCreate) => {
+  const response = await http.post(BASE_URL, fanpageCreate);
+  return response.payload;
 };
 export const updateFanpage = (
   fanpageId: number,

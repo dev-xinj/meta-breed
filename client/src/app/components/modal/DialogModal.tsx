@@ -22,7 +22,7 @@ export function DialogModal({
 }: {
   dialogProps: DialogProps;
   isOpen?: boolean;
-  handleOpenChange: (val: boolean) => void;
+  handleOpenChange?: (val: boolean) => void;
   handleSave: () => void;
   children?: React.ReactNode;
 }) {

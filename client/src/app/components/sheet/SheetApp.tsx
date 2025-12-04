@@ -21,6 +21,7 @@ import { Account } from "@/domain/users/account.types";
 import { useMultiSelectStore } from "@/hooks/useMultiSelect";
 import { useUploadFileStore } from "@/hooks/useUploadFile";
 import { useState } from "react";
+import { toast } from "sonner";
 import { FileUploadApp } from "../input/FileUploadApp";
 import { DialogModal } from "../modal/DialogModal";
 import { RadioGroupApp } from "../radio/RadioGroupApp";
@@ -216,7 +217,10 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
               key={1}
               dialogProps={dialogPropsComment}
             >
-              <FileUploadApp accept=".xlsx"></FileUploadApp>
+              <FileUploadApp
+                onFileAccept={() => console.log("oke")}
+                accept={".xlsx"}
+              ></FileUploadApp>
             </DialogModal>
           )}
           {interact.comments.isComment && (
@@ -227,7 +231,12 @@ export function SheetApp({ children }: { children?: React.ReactNode }) {
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>
-          <Button onClick={() => console.log(interact)} type="submit">
+          <Button
+            onClick={() => {
+              console.log(interact);
+            }}
+            // type="submit"
+          >
             Save changes
           </Button>
         </SheetFooter>

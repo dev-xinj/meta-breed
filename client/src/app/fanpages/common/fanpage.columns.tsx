@@ -1,4 +1,5 @@
 "use client";
+import { Fanpage } from "@/app/fanpages/types/fanpage.type";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -11,9 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Account } from "../../../domain/users/account.types";
 import Link from "next/link";
-import { Fanpage } from "@/app/fanpages/types/fanpage.type";
 export const FanpageColumns: ColumnDef<Fanpage>[] = [
   {
     id: "select",
@@ -100,16 +99,26 @@ export const FanpageColumns: ColumnDef<Fanpage>[] = [
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => alert("Clicked!")}>
-                Edit
+            <DropdownMenuItem
+              className="cursor-pointer justify-between hover:bg-violet-50 hover:text-violet-500"
+              onClick={() => alert("Clicked delete!")}
+            >
+              Delete
             </DropdownMenuItem>
-
-            <DropdownMenuItem  >
+            <DropdownMenuItem
+              className={`cursor-pointer justify-between hover:bg-violet-50 hover:text-violet-500`}
+              onClick={() => alert("Clicked edit!")}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem>
               <Link
                 href={`/fanpages/${fanpage.pageUUID}`}
-                className={`cursor-pointer justify-between text-gray-500 hover:bg-violet-50 hover:text-violet-500`}
-              >Danh sách posts</Link>
-              </DropdownMenuItem>
+                className={`cursor-pointer justify-between hover:bg-violet-50 hover:text-violet-500`}
+              >
+                Danh sách posts
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -1,5 +1,5 @@
 import { SheetApp } from "@/app/components/sheet/SheetApp";
-import PostTableApp from "@/app/components/table/PostTableApp";
+import PostTableApp from "@/app/fanpages/[accId]/components/FanpagePostDataTable";
 
 export default async function PostPage({
   params,

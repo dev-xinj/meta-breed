@@ -1,4 +1,5 @@
 "use client";
+import { FanpageTable } from "@/app/fanpages/[accId]/types/fanpage-post.type";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -9,10 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Post } from "@/domain/posts/post.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-export const postColumns: ColumnDef<Post>[] = [
+export const FanpagePostColumns: ColumnDef<FanpageTable>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,8 +36,7 @@ export const postColumns: ColumnDef<Post>[] = [
     enableHiding: false,
   },
   {
-    
-    accessorKey: "postId",
+    accessorKey: "pageUUID",
     header: ({ column }) => {
       return (
         <Button
@@ -49,7 +48,7 @@ export const postColumns: ColumnDef<Post>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className=" w-24 lowercase">{row.getValue("postId")}</div>,
+    cell: ({ row }) => <div className=" w-24 lowercase">{row.getValue("pageUUID")}</div>,
     enableHiding: true,
   },
   {
@@ -67,116 +66,53 @@ export const postColumns: ColumnDef<Post>[] = [
     },
     cell: ({ row }) => <div className=" text-wrap w-64 lowercase">{row.getValue("title")}</div>,
   },
-  // {
-  //   accessorKey: "title",
-  //   header: () => {
-  //     return <div className="text-center">Title</div>;
-  //   },
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div className="text-left text-wrap w-64  font-medium">
-  //         {row.getValue("title")}
-  //       </div>
-  //     );
-  //   },
-  // },
   {
-    accessorKey: "viewNum",
+    accessorKey: "created_time",
     header: () => {
-      return <div className="text-center">Lượt xem</div>;
+      return <div className="text-center">Ngày tạo</div>;
     },
     cell: ({ row }) => {
       return (
-        <div className="text-center font-medium">{row.getValue("viewNum")}</div>
+        <div className="text-center font-medium">{row.getValue("created_time")}</div>
       );
     },
   },
   {
-    accessorKey: "viewerNum",
+    accessorKey: "updated_time",
     header: () => {
-      return <div className="text-center">Người xem</div>;
+      return <div className="text-center">Lần chỉnh sửa</div>;
     },
     cell: ({ row }) => {
       return (
         <div className="text-center font-medium">
-          {row.getValue("viewerNum")}
+          {row.getValue("updated_time")}
         </div>
       );
     },
   },
   {
-    accessorKey: "followerNum",
+    accessorKey: "status_type",
     header: () => {
-      return <div className="text-center">Lượt theo dõi</div>;
+      return <div className="text-center">Loại bài viết</div>;
     },
     cell: ({ row }) => {
       return (
         <div className="text-center font-medium">
-          {row.getValue("followerNum")}
+          {row.getValue("status_type")}
         </div>
       );
     },
   },
   {
-    accessorKey: "interactNum",
-    header: () => {
-      return <div className="text-center">Lượt tương tác</div>;
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-center font-medium">
-          {row.getValue("interactNum")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "reactionNum",
-    header: () => {
-      return <div className="text-center">Cảm xúc</div>;
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-center font-medium">
-          {row.getValue("reactionNum")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "commentNum",
+    accessorKey: "totalComments",
     header: () => {
       return <div className="text-center">Lượt bình luận</div>;
     },
     cell: ({ row }) => {
       return (
         <div className="text-center font-medium">
-          {row.getValue("commentNum")}
+          {row.getValue("totalComments")}
         </div>
-      );
-    },
-  },
-  {
-    accessorKey: "shareNum",
-    header: () => {
-      return <div className="text-center">Chia sẻ</div>;
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-center font-medium">
-          {row.getValue("shareNum")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "saveNum",
-    header: () => {
-      return <div className="text-center">Lượt lưu</div>;
-    },
-    cell: ({ row }) => {
-      return (
-        <div className="text-center font-medium">{row.getValue("saveNum")}</div>
       );
     },
   },
@@ -184,7 +120,7 @@ export const postColumns: ColumnDef<Post>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const fanpagePost = row.original;
 
       return (
         <DropdownMenu>
@@ -197,15 +133,15 @@ export const postColumns: ColumnDef<Post>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(fanpagePost.fanpagePostUUID)}
             >
-              Copy payment ID
+              Copy postUUID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => alert("Clicked!")}>
-              View customer
+              Comment hàng loạt
             </DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Xem chi tiết</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

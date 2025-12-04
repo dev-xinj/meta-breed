@@ -9,12 +9,13 @@ import { UseFormReturn } from "react-hook-form";
 import { DialogModal } from "../../components/modal/DialogModal";
 import { DataTableApp } from "../../components/table/DataTableApp";
 import TabFromAccount from "../../components/tabs/TabFromAccount";
-import { findAllFanpage, saveFanpage } from "../services/fanpage.api";
+import { findAllFanpage, saveFanpage } from "../services/fanpage.service";
 import { FanpageCreate } from "../types/fanpage-create.type";
 import { Fanpage } from "../types/fanpage.type";
 
 export default function FanpageDataTable() {
   const [fanpages, setFanpages] = useState<Fanpage[]>([]);
+  const [isFormAddFanpage, setIsFormAddFanpage] = useState(false);
   const handleFindAllFanpage = () => {
     findAllFanpage()
       .then((result) => {
@@ -38,29 +39,28 @@ export default function FanpageDataTable() {
     setActiveTab(val);
   };
   const handleSubmitForm = (data: FanpageCreate) => {
-    console.log(data);
     const response = saveFanpage(data);
     if (response?.success) {
+      setIsFormAddFanpage(false);
       handleFindAllFanpage();
     }
     // setFormData([data]);
   };
   const formRef = useRef<UseFormReturn<ProfileFormValues> | null>(null);
-  const handleSubmitOutside = () => {
+  const handleSubmitOutside = async () => {
     if (activeTab !== "input") {
-      console.log(fanpageImport);
-
       if (fanpageImport.length) {
         const createPage = fanpageImport.map((page) => ({
           pageName: page.pageName,
           pageUUID: page.pageUUID,
           accessToken: page.accessToken,
         }));
-        createPage.forEach((page) => {
-          saveFanpage(page);
+
+        createPage.map(async (page) => {
+          return await saveFanpage(page);
         });
+        setIsFormAddFanpage(false);
       }
-      return;
     }
     if (!formRef.current) return;
     formRef.current.handleSubmit((data) => {
@@ -80,13 +80,13 @@ export default function FanpageDataTable() {
       );
     }
   };
-  console.log("render lại");
   return (
     <DataTableApp filter="pageName" columns={FanpageColumns} data={fanpages}>
       <DialogModal
         dialogProps={dialogPropsFromAccount}
         handleSave={handleSubmitOutside}
-        handleOpenChange={() => console.log("123")}
+        isOpen={isFormAddFanpage}
+        handleOpenChange={setIsFormAddFanpage}
       >
         <TabFromAccount
           activeTab={activeTab}
