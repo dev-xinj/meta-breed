@@ -3,6 +3,7 @@ import { FanpageColumns } from "@/app/common/columns/fanpage.columns";
 import ProfileForm, {
   ProfileFormValues,
 } from "@/app/components/form/AccountForm";
+import { SelectApp } from "@/app/components/select/Select";
 import readExcel from "@/components/lib/excel";
 import { ContentComments } from "@/domain/model/interact.types";
 import { dialogPropsFromAccount } from "@/domain/props/dialog.data";
@@ -20,16 +21,13 @@ import {
 } from "../services/fanpage.service";
 import { FanpageCreate } from "../types/fanpage-create.type";
 import { Fanpage } from "../types/fanpage.type";
-import { useRouter, useSearchParams } from "next/navigation";
-import { SelectApp } from "@/app/components/select/Select";
 
 export default function FanpageDataTable() {
-  const searchParams = useSearchParams();
-  const page = searchParams.get("page");
-  console.log(page);
+  console.log('render')
   const configSelect = {
     defaultValue: "1",
     placeholder: "Select",
+    disabled: false,
     options: [
       {
         label: "select 1",
@@ -40,13 +38,18 @@ export default function FanpageDataTable() {
         value: "2",
       },
     ],
-    onChange: (val: string) =>
-      router.push(`/fanpages?user=nguyentt&page=${val}`),
+    onChange: (val: string) => {
+      console.log(val);
+      setConfig((prev) => ({
+        ...prev,
+        disabled: true,
+      }));
+      handleFindAllFanpage();
+    },
   };
+  const [config, setConfig] = useState(configSelect);
   const [fanpages, setFanpages] = useState<Fanpage[]>([]);
   const [action, setAction] = useState("NEW");
-  const router = useRouter();
-
   const [dataEdit, setDataEdit] = useState<ProfileFormValues>({
     pageUUID: "",
     pageName: "",
@@ -62,6 +65,12 @@ export default function FanpageDataTable() {
       })
       .catch((error) => {
         return error;
+      })
+      .finally(() => {
+        setConfig((prev) => ({
+          ...prev,
+          disabled: false,
+        }));
       });
   };
   const handleDelete = (id: string) => {
@@ -165,7 +174,7 @@ export default function FanpageDataTable() {
       // data={fanpages}
       data={FanpageColumnData}
     >
-      <SelectApp config={configSelect}></SelectApp>
+      <SelectApp config={config}></SelectApp>
       <DialogModal
         dialogProps={dialogPropsFromAccount}
         handleSave={handleSubmitOutside}

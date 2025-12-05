@@ -15,13 +15,18 @@ export type SelectOption = {
 export type SelectConfig = {
   defaultValue?: string;
   placeholder?: string;
+  disabled?: boolean;
   options?: SelectOption[];
   onChange?: (val: string) => void;
 };
 
 export function SelectApp({ config }: { config: SelectConfig }) {
   return (
-    <Select defaultValue={config.defaultValue} onValueChange={config.onChange}>
+    <Select
+      disabled={config.disabled}
+      defaultValue={config.defaultValue}
+      onValueChange={config.onChange}
+    >
       <SelectTrigger className="w-[180px] cursor-pointer shadow-lg font-bold text-violet-500 hover:bg-violet-200 rounded-sm outline">
         <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>

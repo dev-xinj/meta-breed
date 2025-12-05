@@ -20,7 +20,7 @@ export default function Item({ item }: { item: ISidebarItem }) {
   const isActive = pathname === path;
 
   return (
-    <Link 
+    <Link
       href={`${path}`}
       className={`flex items-center p-3 rounded-lg cursor-pointer justify-between
       ${
