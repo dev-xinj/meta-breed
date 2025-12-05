@@ -16,7 +16,7 @@ import { PostModule } from './post/post.module';
       port: 5432,
       username: 'admin',
       password: 'adminkm',
-      database: 'smartTS',
+      database: 'meta-breed',
       entities: [Page],
       synchronize: true,
     }),

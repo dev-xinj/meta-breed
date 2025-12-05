@@ -1,5 +1,5 @@
 'use client'
-import { Bell, LayoutGrid, LucideIcon, Users } from "lucide-react";
+import { Bell, Flag, LayoutGrid, LucideIcon, Users } from "lucide-react";
 import Item from "./ItemSideBar";
 // import Item from "./item";
 
@@ -22,8 +22,13 @@ const items: ISidebarItem[] = [
     path: "/",
   },
   {
-    name: "Fanpages",
+    name: "Accounts",
     icon: Users,
+    path: "/accounts",
+  },
+  {
+    name: "Fanpages",
+    icon: Flag,
     path: "/fanpages",
   },
   {

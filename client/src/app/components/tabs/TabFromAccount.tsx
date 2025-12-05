@@ -1,4 +1,4 @@
-import ProfileForm, { ProfileFormValues } from "@/app/form/AccountForm";
+import ProfileForm, { ProfileFormValues } from "@/app/components/form/AccountForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { FileUploadApp } from "../input/FileUploadApp";

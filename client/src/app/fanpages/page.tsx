@@ -1,6 +1,6 @@
 import FanpageDataTable from "./components/FanpageDataTable";
-export default function Accounts() {
-  // console.log(accountColumns);
+export default async function FanpagePage() {
+  
   return (
     <div className="flex flex-col">
       <FanpageDataTable></FanpageDataTable>

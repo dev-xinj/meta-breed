@@ -1,4 +1,4 @@
-import { PageStatus } from "../../enums/page-status.enum";
+import { PageStatus } from "../../common/enums/page-status.enum";
 import { Fanpage } from "../types/fanpage.type";
 
 export const FanpageColumnData: Fanpage[] = [

@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { HttpMessage, ResponseData } from 'src/global/responseData';
 import { CreatePageDto } from './dto/create-page.dto';
+import { PageResponse } from './dto/PageResponse.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { PageService } from './page.service';
-import { PageResponse } from './dto/PageResponse.dto';
 
 @Controller('page')
 export class PageController {
@@ -37,12 +37,14 @@ export class PageController {
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: number, @Body() updatePageDto: UpdatePageDto) {
-    return this.pageService.update(id, updatePageDto);
+  async update(@Param('id') id: number, @Body() updatePageDto: UpdatePageDto) {
+    const response = await this.pageService.update(id, updatePageDto);
+    return new ResponseData(HttpStatus.OK, HttpMessage.OK, response);
   }
 
   @Delete('delete/:id')
   remove(@Param('id') id: number) {
-    return this.pageService.remove(+id);
+    const response = this.pageService.remove(+id);
+    return new ResponseData(HttpStatus.OK, HttpMessage.OK, response);
   }
 }

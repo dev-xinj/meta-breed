@@ -2,7 +2,7 @@
 import { FBPostItemResponse } from "@/app/fanpages/[accId]/schemas/fanpage-post.schema";
 import { findAllPagePost } from "@/app/fanpages/[accId]/services/fanpage-post.service";
 import { FanpageTable } from "@/app/fanpages/[accId]/types/fanpage-post.type";
-import { FanpagePostColumns } from "@/app/fanpages/common/fanpage-post.columns";
+import { FanpagePostColumns } from "@/app/common/columns/fanpage-post.columns";
 import { dialogPropsCommentLink } from "@/domain/props/dialog.data";
 import { useEffect, useState } from "react";
 import { DialogModal } from "../../../components/modal/DialogModal";

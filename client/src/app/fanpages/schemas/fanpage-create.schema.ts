@@ -1,4 +1,4 @@
-import { PageStatus } from "@/app/enums/page-status.enum";
+import { PageStatus } from "@/app/common/enums/page-status.enum";
 import { z } from "zod";
 export const FanpageCreateSchema = z.object({
   pageUUID: z.string(),

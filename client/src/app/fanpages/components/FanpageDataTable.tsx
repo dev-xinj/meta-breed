@@ -1,6 +1,8 @@
 "use client";
-import { FanpageColumns } from "@/app/fanpages/common/fanpage.columns";
-import ProfileForm, { ProfileFormValues } from "@/app/form/AccountForm";
+import { FanpageColumns } from "@/app/common/columns/fanpage.columns";
+import ProfileForm, {
+  ProfileFormValues,
+} from "@/app/components/form/AccountForm";
 import readExcel from "@/components/lib/excel";
 import { ContentComments } from "@/domain/model/interact.types";
 import { dialogPropsFromAccount } from "@/domain/props/dialog.data";
@@ -9,14 +11,42 @@ import { UseFormReturn } from "react-hook-form";
 import { DialogModal } from "../../components/modal/DialogModal";
 import { DataTableApp } from "../../components/table/DataTableApp";
 import TabFromAccount from "../../components/tabs/TabFromAccount";
-import { findAllFanpage, saveFanpage } from "../services/fanpage.service";
+import { FanpageColumnData } from "../mock/fanpage.data";
+import {
+  deleteFanpage,
+  findAllFanpage,
+  saveFanpage,
+  updateFanpage,
+} from "../services/fanpage.service";
 import { FanpageCreate } from "../types/fanpage-create.type";
 import { Fanpage } from "../types/fanpage.type";
-import { PageStatus } from "@/app/enums/page-status.enum";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SelectApp } from "@/app/components/select/Select";
 
 export default function FanpageDataTable() {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page");
+  console.log(page);
+  const configSelect = {
+    defaultValue: "1",
+    placeholder: "Select",
+    options: [
+      {
+        label: "select 1",
+        value: "1",
+      },
+      {
+        label: "select 2",
+        value: "2",
+      },
+    ],
+    onChange: (val: string) =>
+      router.push(`/fanpages?user=nguyentt&page=${val}`),
+  };
   const [fanpages, setFanpages] = useState<Fanpage[]>([]);
   const [action, setAction] = useState("NEW");
+  const router = useRouter();
+
   const [dataEdit, setDataEdit] = useState<ProfileFormValues>({
     pageUUID: "",
     pageName: "",
@@ -35,8 +65,14 @@ export default function FanpageDataTable() {
       });
   };
   const handleDelete = (id: string) => {
-    setFanpages((prev) => prev.filter((x) => x.id !== id));
-    console.log("alert delete: " + id);
+    deleteFanpage(+id)
+      .then((data) => {
+        console.log(data.success + "alert delete: " + id);
+        setFanpages((prev) => prev.filter((x) => x.id !== id));
+      })
+      .catch((error) => {
+        return error;
+      });
   };
   const handleEdit = (id: string) => {
     console.log("alert edit: " + id);
@@ -51,10 +87,6 @@ export default function FanpageDataTable() {
     setIsFormAddFanpage(true);
     setAction("EDIT");
   };
-  // function handleOnValueChange(val: boolean): void {
-  //   console.log(dataEdit);
-  //   setIsFormAddFanpage(val);
-  // }
   const columns = FanpageColumns({
     onDelete: handleDelete,
     onEdit: handleEdit,
@@ -78,6 +110,17 @@ export default function FanpageDataTable() {
         setIsFormAddFanpage(false);
         handleFindAllFanpage();
       }
+    } else if (action === "EDIT") {
+      if (dataEdit.id === undefined) {
+        throw Error;
+      }
+      const response = await updateFanpage(dataEdit.id, data);
+      console.log(response);
+      setIsFormAddFanpage(false);
+      handleFindAllFanpage();
+      return response.data;
+    } else {
+      throw Error;
     }
   };
   const formRef = useRef<UseFormReturn<ProfileFormValues> | null>(null);
@@ -116,7 +159,13 @@ export default function FanpageDataTable() {
   };
 
   return (
-    <DataTableApp filter="pageName" columns={columns} data={fanpages}>
+    <DataTableApp
+      filter="pageName"
+      columns={columns}
+      // data={fanpages}
+      data={FanpageColumnData}
+    >
+      <SelectApp config={configSelect}></SelectApp>
       <DialogModal
         dialogProps={dialogPropsFromAccount}
         handleSave={handleSubmitOutside}

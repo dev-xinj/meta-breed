@@ -9,7 +9,7 @@ export class HttpError<T> extends Error {
   }
 }
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 const request = async <T>(
   method: HttpMethod,
@@ -57,10 +57,20 @@ const http = {
     return request<T>("POST", url, JSON.stringify(body), headers);
   },
 
-  put<T>(url: string, body?: Record<string, string>, headers?: Record<string, string>) {
+  put<T>(
+    url: string,
+    body?: Record<string, string>,
+    headers?: Record<string, string>
+  ) {
     return request<T>("PUT", url, JSON.stringify(body), headers);
   },
-
+  patch<T>(
+    url: string,
+    body?: Record<string, string>,
+    headers?: Record<string, string>
+  ) {
+    return request<T>("PATCH", url, JSON.stringify(body), headers);
+  },
   delete<T>(url: string, headers?: Record<string, string>) {
     return request<T>("DELETE", url, undefined, headers);
   },
